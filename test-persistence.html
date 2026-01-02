@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitStat Persistence Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        h1,
+        h2 {
+            color: #f1f5f9;
+            margin-top: 0;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .status-item {
+            background: #0b1220;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .status-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: #2563eb;
+        }
+
+        .btn:disabled {
+            background: #64748b;
+            cursor: not-allowed;
+        }
+
+        .log {
+            background: #0b1220;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 15px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .success {
+            color: #22c55e;
+        }
+
+        .error {
+            color: #ef4444;
+        }
+
+        .info {
+            color: #60a5fa;
+        }
+
+        .instructions {
+            background: #0b1220;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🧪 FitStat Persistence Layer Test</h1>
+
+    <div class="instructions">
+        <h3>📋 Instructions:</h3>
+        <ol>
+            <li>Open this page in multiple browser tabs or devices</li>
+            <li>Add some test data using the buttons below</li>
+            <li>Check the sync status and logs</li>
+            <li>Simulate offline/online scenarios</li>
+            <li>Verify data syncs across all instances</li>
+        </ol>
+        <p><strong>Note:</strong> This is a frontend test. For full functionality, you need a Supabase backend
+            configured.</p>
+    </div>
+
+    <div class="card">
+        <h2>📡 Connection Status</h2>
+        <div class="status-grid">
+            <div class="status-item">
+                <div>Online Status</div>
+                <div class="status-value" id="onlineStatus">Checking...</div>
+            </div>
+            <div class="status-item">
+                <div>Sync Status</div>
+                <div class="status-value" id="syncStatus">Idle</div>
+            </div>
+            <div class="status-item">
+                <div>Pending Changes</div>
+                <div class="status-value" id="pendingChanges">0</div>
+            </div>
+            <div class="status-item">
+                <div>Last Sync</div>
+                <div class="status-value" id="lastSync">Never</div>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 15px;">
+            <button class="btn" onclick="simulateOffline()">Go Offline</button>
+            <button class="btn" onclick="simulateOnline()">Go Online</button>
+            <button class="btn" onclick="forceSync()">Force Sync</button>
+            <button class="btn" onclick="clearData()">Clear Local Data</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>📝 Test Data Operations</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            <div>
+                <h3>📅 Daily Log</h3>
+                <input type="date" id="testDate" value="2024-01-15"
+                    style="width: 100%; margin-bottom: 10px; padding: 8px; background: #0b1220; border: 1px solid #334155; color: white; border-radius: 4px;">
+                <input type="number" id="testWeight" placeholder="Weight (kg)" value="80"
+                    style="width: 100%; margin-bottom: 10px; padding: 8px; background: #0b1220; border: 1px solid #334155; color: white; border-radius: 4px;">
+                <button class="btn" style="width: 100%" onclick="addTestDailyLog()">Add Daily Log</button>
+            </div>
+
+            <div>
+                <h3>🍽️ Meal Log</h3>
+                <select id="mealType"
+                    style="width: 100%; margin-bottom: 10px; padding: 8px; background: #0b1220; border: 1px solid #334155; color: white; border-radius: 4px;">
+                    <option value="breakfast">Breakfast</option>
+                    <option value="lunch">Lunch</option>
+                    <option value="dinner">Dinner</option>
+                    <option value="snack">Snack</option>
+                </select>
+                <input type="text" id="mealName" placeholder="Meal name" value="Test Meal"
+                    style="width: 100%; margin-bottom: 10px; padding: 8px; background: #0b1220; border: 1px solid #334155; color: white; border-radius: 4px;">
+                <button class="btn" style="width: 100%" onclick="addTestMealLog()">Add Meal Log</button>
+            </div>
+
+            <div>
+                <h3>💪 Strength Log</h3>
+                <input type="text" id="exerciseName" placeholder="Exercise" value="Bench Press"
+                    style="width: 100%; margin-bottom: 10px; padding: 8px; background: #0b1220; border: 1px solid #334155; color: white; border-radius: 4px;">
+                <input type="number" id="sets" placeholder="Sets" value="3"
+                    style="width: 48%; padding: 8px; background: #0b1220; border: 1px solid #334155; color: white; border-radius: 4px; margin-right: 4%;">
+                <input type="number" id="reps" placeholder="Reps" value="10"
+                    style="width: 48%; padding: 8px; background: #0b1220; border: 1px solid #334155; color: white; border-radius: 4px;">
+                <button class="btn" style="width: 100%; margin-top: 10px;" onclick="addTestStrengthLog()">Add Strength
+                    Log</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>📋 Activity Log</h2>
+        <div id="activityLog" class="log"></div>
+    </div>
+
+    <script>
+        // Mock sync service for testing
+        class MockSyncService {
+            constructor() {
+                this.isOnline = navigator.onLine;
+                this.pendingChanges = 0;
+                this.lastSync = null;
+                this.syncInProgress = false;
+
+                window.addEventListener('online', () => {
+                    this.isOnline = true;
+                    this.updateUI();
+                    this.log('🌐 Connection restored', 'info');
+                });
+
+                window.addEventListener('offline', () => {
+                    this.isOnline = false;
+                    this.updateUI();
+                    this.log('📵 Connection lost', 'error');
+                });
+            }
+
+            async forceSync() {
+                if (!this.isOnline) {
+                    this.log('❌ Cannot sync: Offline', 'error');
+                    return;
+                }
+
+                this.syncInProgress = true;
+                this.updateUI();
+                this.log('🔄 Starting sync...', 'info');
+
+                // Simulate sync delay
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                this.lastSync = new Date();
+                this.pendingChanges = 0;
+                this.syncInProgress = false;
+
+                this.updateUI();
+                this.log('✅ Sync completed successfully', 'success');
+
+                // Broadcast to other tabs
+                localStorage.setItem('fitstat_sync_pending', 'false');
+                window.dispatchEvent(new Event('storage'));
+            }
+
+            markPendingChanges() {
+                this.pendingChanges++;
+                this.updateUI();
+                this.log(`📝 Pending changes: ${this.pendingChanges}`, 'info');
+
+                if (this.isOnline) {
+                    setTimeout(() => this.forceSync(), 2000);
+                }
+            }
+
+            updateUI() {
+                document.getElementById('onlineStatus').textContent = this.isOnline ? 'Online' : 'Offline';
+                document.getElementById('onlineStatus').style.color = this.isOnline ? '#22c55e' : '#ef4444';
+
+                document.getElementById('syncStatus').textContent = this.syncInProgress ? 'Syncing...' : 'Idle';
+                document.getElementById('syncStatus').style.color = this.syncInProgress ? '#f59e0b' : '#60a5fa';
+
+                document.getElementById('pendingChanges').textContent = this.pendingChanges;
+                document.getElementById('pendingChanges').style.color = this.pendingChanges > 0 ? '#f59e0b' : '#60a5fa';
+
+                document.getElementById('lastSync').textContent = this.lastSync
+                    ? this.lastSync.toLocaleString()
+                    : 'Never';
+            }
+
+            log(message, type = 'info') {
+                const logElement = document.getElementById('activityLog');
+                const time = new Date().toLocaleTimeString();
+                const entry = document.createElement('div');
+                entry.className = type;
+                entry.textContent = `[${time}] ${message}`;
+                logElement.appendChild(entry);
+                logElement.scrollTop = logElement.scrollHeight;
+            }
+        }
+
+        // Initialize
+        const syncService = new MockSyncService();
+
+        // Test functions
+        function addTestDailyLog() {
+            const date = document.getElementById('testDate').value;
+            const weight = parseFloat(document.getElementById('testWeight').value);
+
+            const log = {
+                date: date,
+                weight: weight,
+                sleepHours: 7,
+                steps: 8000,
+                proteinG: 150
+            };
+
+            localStorage.setItem(`fitstat_daily_logs_test`, JSON.stringify([log]));
+            syncService.markPendingChanges();
+            syncService.log(`📅 Added daily log for ${date}: ${weight}kg`, 'success');
+        }
+
+        function addTestMealLog() {
+            const mealType = document.getElementById('mealType').value;
+            const name = document.getElementById('mealName').value;
+            const calories = Math.floor(Math.random() * 500) + 200;
+
+            const log = {
+                id: Date.now().toString(),
+                date: document.getElementById('testDate').value,
+                meal_type: mealType,
+                name: name,
+                calories: calories,
+                protein: Math.floor(calories * 0.25),
+                carbs: Math.floor(calories * 0.5),
+                fat: Math.floor(calories * 0.25)
+            };
+
+            const existing = JSON.parse(localStorage.getItem(`fitstat_meal_logs_test`) || '[]');
+            existing.push(log);
+            localStorage.setItem(`fitstat_meal_logs_test`, JSON.stringify(existing));
+
+            syncService.markPendingChanges();
+            syncService.log(`🍽️ Added ${mealType} log: ${name} (${calories} cal)`, 'success');
+        }
+
+        function addTestStrengthLog() {
+            const exercise = document.getElementById('exerciseName').value;
+            const sets = parseInt(document.getElementById('sets').value);
+            const reps = parseInt(document.getElementById('reps').value);
+            const weight = Math.floor(Math.random() * 50) + 20;
+
+            const log = {
+                id: Date.now().toString(),
+                date: document.getElementById('testDate').value,
+                exercise: exercise,
+                sets: sets,
+                reps: reps,
+                weight: weight,
+                rpe: (Math.random() * 3 + 7).toFixed(1)
+            };
+
+            const existing = JSON.parse(localStorage.getItem(`fitstat_strength_logs_test`) || '[]');
+            existing.push(log);
+            localStorage.setItem(`fitstat_strength_logs_test`, JSON.stringify(existing));
+
+            syncService.markPendingChanges();
+            syncService.log(`💪 Added strength log: ${exercise} ${sets}x${reps}x${weight}kg`, 'success');
+        }
+
+        function simulateOffline() {
+            Object.defineProperty(navigator, 'onLine', { value: false, configurable: true });
+            window.dispatchEvent(new Event('online'));
+            syncService.log('📵 Simulated offline mode', 'error');
+        }
+
+        function simulateOnline() {
+            Object.defineProperty(navigator, 'onLine', { value: true, configurable: true });
+            window.dispatchEvent(new Event('offline'));
+            syncService.log('🌐 Simulated online mode', 'success');
+        }
+
+        async function forceSync() {
+            await syncService.forceSync();
+        }
+
+        function clearData() {
+            localStorage.removeItem('fitstat_daily_logs_test');
+            localStorage.removeItem('fitstat_meal_logs_test');
+            localStorage.removeItem('fitstat_strength_logs_test');
+            localStorage.removeItem('fitstat_sync_pending');
+            syncService.pendingChanges = 0;
+            syncService.updateUI();
+            syncService.log('🧹 Cleared all test data', 'info');
+        }
+
+        // Listen for changes from other tabs
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'fitstat_sync_pending') {
+                syncService.log('📡 Change detected from another tab', 'info');
+                if (syncService.isOnline) {
+                    setTimeout(() => syncService.forceSync(), 1000);
+                }
+            }
+        });
+
+        // Initial UI update
+        syncService.updateUI();
+        syncService.log('🚀 Persistence test initialized', 'success');
+    </script>
+</body>
+
+</html>
