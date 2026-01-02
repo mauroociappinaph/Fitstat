@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { SleepCorrelation } from '../../types';
+import { SleepCorrelation } from '@/shared/types';
 
 interface Props {
   data: SleepCorrelation | null;
@@ -62,7 +62,7 @@ const SleepCorrelationCard: React.FC<Props> = ({ data, isLoading }) => {
            </div>
         </div>
       </div>
-      
+
       <div className="p-4 bg-purple-900/20 rounded-2xl border border-purple-500/10 text-center">
         <p className="text-[8px] font-black text-purple-300 uppercase tracking-[0.2em]">El descanso no es negociable para la recomposición corporal.</p>
       </div>

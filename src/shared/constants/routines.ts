@@ -1,5 +1,5 @@
 
-import { ExerciseTemplate } from '../types';
+import { ExerciseTemplate } from '@/shared/types';
 
 export const ROUTINES: Record<string, ExerciseTemplate[]> = {
   'Piernas A (Sentadilla focus) + Core': [

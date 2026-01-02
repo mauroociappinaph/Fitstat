@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { DailyLog } from '../../types';
+import { DailyLog } from '@/shared/types';
 
 interface Props {
   session: DailyLog;

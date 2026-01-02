@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../../stores/useAppStore';
-import { getDailyAuditFeedback } from '../../services/geminiService';
+import { getDailyAuditFeedback } from '@/backend/services/geminiService';
 import AIFeedbackDisplay from '../AIFeedbackDisplay';
 import AuditStoryChart from './AuditStoryChart';
 import { useBiometrics } from '../../hooks/useBiometrics';

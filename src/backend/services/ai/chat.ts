@@ -1,14 +1,16 @@
 
 import { ai, SYSTEM_PROMPT } from './client';
-import { UserProfile, DailyLog, StrengthSet } from '../../types';
-import { MASTER_PLAN } from '../../constants/masterPlan';
-import { ROUTINES } from '../../constants/routines';
+import { UserProfile, DailyLog, StrengthSet } from '../../../shared/types';
+import { MASTER_PLAN } from '@/shared/constants/masterPlan';
+import { ROUTINES } from '@/shared/constants/routines';
+
+
 
 export const streamChatResponse = async (
-  message: string, 
-  history: any[], 
-  profile: UserProfile, 
-  logs: DailyLog[], 
+  message: string,
+  history: any[],
+  profile: UserProfile,
+  logs: DailyLog[],
   strength: StrengthSet[],
   selectedDate: string
 ) => {

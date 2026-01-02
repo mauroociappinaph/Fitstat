@@ -1,12 +1,12 @@
 
 import { ai } from './client';
 import { Type } from "@google/genai";
-import { DailyLog } from "../../types";
+import { DailyLog } from "../../../shared/types";
 
 export const parseNaturalLanguageLog = async (text: string, referenceDate: string): Promise<Partial<DailyLog> | null> => {
-  const prompt = `Extrae datos de salud de este texto: "${text}". 
+  const prompt = `Extrae datos de salud de este texto: "${text}".
   Fecha de referencia (HOY): ${referenceDate}.
-  
+
   Instrucciones:
   1. Identifica métricas (peso, pasos, agua, proteína).
   2. Determina la fecha del registro. Si el usuario usa términos relativos como "ayer", "anteayer", "el lunes" o fechas específicas, calcula la fecha ISO (YYYY-MM-DD) basándote en la fecha de referencia.
@@ -23,9 +23,9 @@ export const parseNaturalLanguageLog = async (text: string, referenceDate: strin
         responseSchema: {
           type: Type.OBJECT,
           properties: {
-            date: { 
-              type: Type.STRING, 
-              description: "La fecha calculada del registro en formato YYYY-MM-DD" 
+            date: {
+              type: Type.STRING,
+              description: "La fecha calculada del registro en formato YYYY-MM-DD"
             },
             weight: { type: Type.NUMBER },
             steps: { type: Type.NUMBER },
@@ -39,10 +39,10 @@ export const parseNaturalLanguageLog = async (text: string, referenceDate: strin
         }
       },
     });
-    
+
     return JSON.parse(response.text || "{}");
-  } catch (e) { 
+  } catch (e) {
     console.error("Error parsing natural language log:", e);
-    return null; 
+    return null;
   }
 };

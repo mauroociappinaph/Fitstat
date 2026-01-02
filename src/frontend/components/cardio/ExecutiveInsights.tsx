@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { AdvancedCardioInsight } from '../../types';
+import { AdvancedCardioInsight } from '@/shared/types';
 
 interface Props {
   insights: AdvancedCardioInsight | null;

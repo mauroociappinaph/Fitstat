@@ -1,7 +1,7 @@
 
 import { ai } from './client';
 import { Type } from "@google/genai";
-import { DailyLog, UserProfile, AdvancedCardioInsight } from "../../types";
+import { DailyLog, UserProfile, AdvancedCardioInsight } from "../../../shared/types";
 
 export const getCardioProjections = async (history: DailyLog[], profile: UserProfile): Promise<{ date: string, efficiency: number }[]> => {
   const walkHistory = history

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { PredictionValue } from '../../types';
+import { PredictionValue } from '@/shared/types';
 
 interface PredictionCardProps {
   title: string;

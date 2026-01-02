@@ -1,5 +1,5 @@
 
-import { PlanPhase } from '../types';
+import { PlanPhase } from '@/shared/types';
 
 export const MASTER_PLAN = {
   targetWeight: 75,

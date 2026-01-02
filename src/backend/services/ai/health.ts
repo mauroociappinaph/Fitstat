@@ -1,7 +1,7 @@
 
 import { ai, SYSTEM_PROMPT } from './client';
 import { Type } from "@google/genai";
-import { DailyLog, UserProfile, PredictionData, MetabolicPattern, AIFeedback, StrengthSet, SleepCorrelation } from "../../types";
+import { DailyLog, UserProfile, PredictionData, MetabolicPattern, AIFeedback, StrengthSet, SleepCorrelation } from "../../../shared/types";
 
 export const getPredictions = async (profile: UserProfile, history: DailyLog[], strengthLogs: StrengthSet[]): Promise<PredictionData | null> => {
   const prompt = `Análisis predictivo profundo. Perfil: ${JSON.stringify(profile)}, Historial: ${JSON.stringify(history.slice(0,10))}.`;
@@ -91,7 +91,7 @@ export const getSleepCorrelationAnalysis = async (history: DailyLog[]): Promise<
 export const getDailyAuditFeedback = async (log: DailyLog, profile: UserProfile, history: DailyLog[]): Promise<AIFeedback | null> => {
   const totalIn = log.meals?.reduce((acc, m) => acc + (m.calories || 0), 0) || 0;
   const mealsInfo = log.meals?.map(m => `${m.type} (${m.calories}kcal) a las ${m.timestamp || 'N/A'}`).join(', ') || 'Sin comidas registradas';
-  
+
   const prompt = `
 Auditoría Metabólica Pro.
 Día: ${log.date}. Ingesta: ${totalIn}kcal. Pasos: ${log.steps}. Sueño: ${log.sleepHours}h. Agua: ${log.waterMl}ml.
@@ -110,7 +110,7 @@ INSTRUCCIÓN:
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: prompt,
-      config: { 
+      config: {
         systemInstruction: SYSTEM_PROMPT,
         responseMimeType: "application/json",
         responseSchema: {
@@ -141,7 +141,7 @@ export const getNutritionFeedback = async (current: { p: number, c: number, f: n
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: prompt,
-      config: { 
+      config: {
         systemInstruction: SYSTEM_PROMPT,
         responseMimeType: "application/json",
         responseSchema: {
