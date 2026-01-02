@@ -1,6 +1,6 @@
 
 import React, { useMemo } from 'react';
-import { PredictionData, UserProfile } from '../types';
+import { PredictionData, UserProfile } from '@/shared/types';
 
 interface Milestone {
   id: string;

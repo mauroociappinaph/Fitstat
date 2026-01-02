@@ -1,8 +1,9 @@
 
 import { useState, useMemo } from 'react';
-import { useAppStore } from '../stores/useAppStore';
-import { ROUTINES } from '../constants/routines';
-import { StrengthSet, ExerciseTemplate } from '../types';
+import { useAppStore } from '@/frontend/stores/useAppStore';
+
+import { StrengthSet, ExerciseTemplate } from '@/shared/types';
+import { ROUTINES } from '../../shared/constants/routines';
 
 export const useStrengthData = () => {
   const { strengthLogs, addStrengthLog, selectedDate } = useAppStore();
@@ -34,18 +35,18 @@ export const useStrengthData = () => {
     const history: Record<string, number> = {};
     strengthLogs.forEach(log => {
       if (!history[log.date]) history[log.date] = 0;
-      const totalReps = log.actualReps 
-        ? log.actualReps.reduce((a, b) => a + b, 0) 
+      const totalReps = log.actualReps
+        ? log.actualReps.reduce((a, b) => a + b, 0)
         : (log.sets * (log.reps || 0));
       history[log.date] += totalReps;
     });
 
     return Object.entries(history)
       .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
-      .map(([date, vol]) => ({ 
-        date: date.split('-').slice(1).reverse().join('/'), 
+      .map(([date, vol]) => ({
+        date: date.split('-').slice(1).reverse().join('/'),
         fullDate: date,
-        volume: vol 
+        volume: vol
       }));
   }, [strengthLogs]);
 

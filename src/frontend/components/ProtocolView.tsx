@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useProtocolData } from '../hooks/useProtocolData';
+import { useProtocolData } from '@/frontend/hooks/useProtocolData';
 import {
   PhaseTabs,
   PhaseHeroCard,

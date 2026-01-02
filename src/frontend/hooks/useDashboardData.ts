@@ -1,7 +1,7 @@
 
 import { useMemo } from 'react';
-import { useAppStore } from '../stores/useAppStore';
-import { calculateReadiness, getMacroTargets } from '../utils/healthMath';
+import { useAppStore } from '@/frontend/stores/useAppStore';
+import { calculateReadiness, getMacroTargets } from '@/shared/utils/healthMath';
 
 export const useDashboardData = () => {
   const { dailyLogs, profile, selectedDate } = useAppStore();

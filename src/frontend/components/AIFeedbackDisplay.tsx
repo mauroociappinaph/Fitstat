@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { AIFeedback } from '../types';
+import { AIFeedback } from '@/shared/types';
 
 interface Props {
   data: AIFeedback | null;

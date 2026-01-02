@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { useAppStore } from '../stores/useAppStore';
-import { streamChatResponse } from '../services/geminiService';
+import { useAppStore } from '@/frontend/stores/useAppStore';
+import { streamChatResponse } from '@/backend/services/geminiService';
 
 const FormattedMessage: React.FC<{ text: string; role: 'user' | 'model' }> = ({ text, role }) => {
   if (role === 'user') {

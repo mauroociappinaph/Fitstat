@@ -1,8 +1,8 @@
 
 import { useEffect, useMemo } from 'react';
-import { useAppStore } from '../stores/useAppStore';
-import { getPredictions, getMetabolicPatterns, getSleepCorrelationAnalysis } from '../services/geminiService';
-import { calculateReadiness } from '../utils/healthMath';
+import { useAppStore } from '@/frontend/stores/useAppStore';
+import { getPredictions, getMetabolicPatterns, getSleepCorrelationAnalysis } from '@/backend/services/geminiService';
+import { calculateReadiness } from '@/shared/utils/healthMath';
 
 export const useAICoachData = (hasEnoughData: boolean, activeView: string) => {
   const { profile, dailyLogs, strengthLogs, setLoading, aiCache, setAiCache } = useAppStore();

@@ -1,7 +1,13 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-export const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const apiKey = process.env.API_KEY || (import.meta as any).env?.VITE_GEMINI_API_KEY || '';
+
+if (!apiKey) {
+  console.error("❌ CRITICAL ERROR: Gemini API Key is missing. Please check your .env file and vite.config.ts");
+}
+
+export const ai = new GoogleGenAI({ apiKey });
 
 export const SYSTEM_PROMPT = `
 Eres el Motor FitStat AI (v4.0), el Oráculo de Salud de Atlas Load.

@@ -1,10 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
-import { useAppStore } from '../stores/useAppStore';
-import { DailyLog } from '../types';
+import { useAppStore } from '@/frontend/stores/useAppStore';
+import { DailyLog } from '@/shared/types';
 import StrengthLogForm from './StrengthLogForm';
 import QuickAILogger from './QuickAILogger';
-import { validateBiometrics } from '../utils/validation';
+import { validateBiometrics } from '@/shared/utils/validation';
 import { GlassCard, MetricInput } from './common';
 import DateNavigator from './common/DateNavigator';
 

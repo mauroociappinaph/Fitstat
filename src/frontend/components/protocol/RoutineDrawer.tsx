@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ExerciseTemplate } from '../../types';
+import { ExerciseTemplate } from '@/shared/types';
 
 interface Props {
   selectedRoutine: { day: string, title: string, exercises: ExerciseTemplate[] } | null;
@@ -61,7 +61,7 @@ const RoutineDrawer: React.FC<Props> = ({ selectedRoutine, onClose }) => {
             </div>
           )}
         </div>
-        
+
         <div className="p-6 bg-slate-900/50 border-t border-slate-800 shrink-0 text-center">
            <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Protocolo FitStat AI v4.0 - Basado en Evidencia</p>
         </div>

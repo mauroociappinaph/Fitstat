@@ -1,7 +1,7 @@
 
 import { useMemo, useState, useEffect } from 'react';
-import { useAppStore } from '../stores/useAppStore';
-import { getCardioProjections, getAdvancedCardioInsights } from '../services/geminiService';
+import { useAppStore } from '@/frontend/stores/useAppStore';
+import { getCardioProjections, getAdvancedCardioInsights } from '@/backend/services/geminiService';
 
 export const useCardioData = (activeSubTab: string) => {
   const { dailyLogs, profile, aiCache, setAiCache } = useAppStore();

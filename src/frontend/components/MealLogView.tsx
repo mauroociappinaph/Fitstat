@@ -1,7 +1,7 @@
 
 import React, { useMemo } from 'react';
-import { useAppStore } from '../stores/useAppStore';
-import { MealEntry } from '../types';
+import { useAppStore } from '@/frontend/stores/useAppStore';
+import { MealEntry } from '@/shared/types';
 import { GlassCard } from './common';
 import DateNavigator from './common/DateNavigator';
 

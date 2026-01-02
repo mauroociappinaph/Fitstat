@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import { useAppStore } from '../stores/useAppStore';
-import { validateProfile } from '../utils/validation';
+import { useAppStore } from '@/frontend/stores/useAppStore';
+import { validateProfile } from '@/shared/utils/validation';
 
 const SettingsView: React.FC = () => {
   const { profile, setProfile, dailyLogs, strengthLogs, importFullState, resetToInitial } = useAppStore();

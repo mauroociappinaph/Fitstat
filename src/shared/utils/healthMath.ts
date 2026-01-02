@@ -1,5 +1,5 @@
 
-import { UserProfile, DailyLog, AdaptiveMetabolism } from '../types';
+import { UserProfile, DailyLog, AdaptiveMetabolism } from '@/shared/types';
 
 export const calculateBMR = (profile: UserProfile, weight: number): number => {
   if (profile.bodyFatEstimate) {

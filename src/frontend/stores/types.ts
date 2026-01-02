@@ -1,5 +1,5 @@
 
-import { DailyLog, StrengthSet, UserProfile, MealEntry, PredictionData, MetabolicPattern, AIFeedback, AdvancedCardioInsight, SleepCorrelation } from '../types';
+import { DailyLog, StrengthSet, UserProfile, MealEntry, PredictionData, MetabolicPattern, AIFeedback, AdvancedCardioInsight, SleepCorrelation } from '@/shared/types';
 
 export interface ChatMessage {
   role: 'user' | 'model';

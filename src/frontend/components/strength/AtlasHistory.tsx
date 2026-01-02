@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { StrengthSet } from '../../types';
+import { StrengthSet } from '@/shared/types';
 
 interface Props {
   logs: StrengthSet[];

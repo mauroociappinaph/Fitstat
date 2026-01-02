@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { useCardioData } from '../hooks/useCardioData';
+import { useCardioData } from '@/frontend/hooks/useCardioData';
 import EfficiencyHero from './cardio/EfficiencyHero';
 import ExecutiveInsights from './cardio/ExecutiveInsights';
 import LabMetricsGrid from './cardio/LabMetricsGrid';

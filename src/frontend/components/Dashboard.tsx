@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { useAppStore } from '../stores/useAppStore';
-import { getPredictions } from '../services/geminiService';
-import { useDashboardData } from '../hooks/useDashboardData';
+import { useAppStore } from '@/frontend/stores/useAppStore';
+import { getPredictions } from '@/backend/services/geminiService';
+import { useDashboardData } from '@/frontend/hooks/useDashboardData';
 import {
   DashboardViewSwitcher,
   OverviewView,

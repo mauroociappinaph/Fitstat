@@ -1,9 +1,9 @@
 
 import { useState, useMemo } from 'react';
-import { useAppStore } from '../stores/useAppStore';
+import { useAppStore } from '@/frontend/stores/useAppStore';
 import { MASTER_PLAN } from '../constants/masterPlan';
 import { ROUTINES } from '../constants/routines';
-import { ExerciseTemplate } from '../types';
+import { ExerciseTemplate } from '@/shared/types';
 
 export const useProtocolData = () => {
   const { profile } = useAppStore();

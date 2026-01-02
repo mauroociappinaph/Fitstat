@@ -1,9 +1,10 @@
 
 import React, { useMemo, useState, useEffect } from 'react';
-import { useAppStore } from '../stores/useAppStore';
+import { useAppStore } from '@/frontend/stores/useAppStore';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { getDailyAuditFeedback } from '../services/geminiService';
+
 import AIFeedbackDisplay from './AIFeedbackDisplay';
+import { getDailyAuditFeedback } from '../../backend/services/geminiService';
 
 const DailyAudit: React.FC = () => {
   const { dailyLogs, profile, aiCache, setAiCache } = useAppStore();
@@ -24,7 +25,7 @@ const DailyAudit: React.FC = () => {
   const calculateStats = (log: typeof todayLog) => {
     if (!log) return null;
     const kcalIn = log.meals?.reduce((acc, m) => acc + (m.calories || 0), 0) || 0;
-    const bmr = profile.gender === 'male' 
+    const bmr = profile.gender === 'male'
       ? (10 * log.weight) + (6.25 * profile.height) - (5 * profile.age) + 5
       : (10 * log.weight) + (6.25 * profile.height) - (5 * profile.age) - 161;
 
@@ -59,7 +60,7 @@ const DailyAudit: React.FC = () => {
         setIsAnalyzingToday(false);
       }
     };
-    
+
     const fetchYesterdayAudit = async () => {
       if (yesterdayLog && !cachedYesterdayFeedback) {
         setIsAnalyzingYesterday(true);
@@ -91,7 +92,7 @@ const DailyAudit: React.FC = () => {
           <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">Balance de Hoy</h3>
         </div>
         <AIFeedbackDisplay data={cachedTodayFeedback} isLoading={isAnalyzingToday} type="audit" />
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="glass p-10 rounded-[3rem] border-slate-800 space-y-8 min-h-[350px]">
             <div className="text-center">
@@ -150,7 +151,7 @@ const DailyAudit: React.FC = () => {
             <div className="md:col-span-2">
               <AIFeedbackDisplay data={cachedYesterdayFeedback} isLoading={isAnalyzingYesterday} type="audit" />
             </div>
-            
+
             <div className="glass p-8 rounded-[3rem] border-slate-800 flex flex-col justify-between">
               <div>
                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Métricas Ayer</p>

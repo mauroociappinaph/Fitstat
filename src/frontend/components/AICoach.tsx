@@ -1,13 +1,13 @@
 
 import React, { useState } from 'react';
-import { useAppStore } from '../stores/useAppStore';
+import { useAppStore } from '@/frontend/stores/useAppStore';
 import { DailyAudit } from './dashboard/index';
 import ReadinessCard from './ai-coach/ReadinessCard';
 import CoachAlertsPanel from './ai-coach/CoachAlertsPanel';
 import PredictionCard from './ai-coach/PredictionCard';
 import OptimizationStrategy from './ai-coach/OptimizationStrategy';
 import SleepCorrelationCard from './ai-coach/SleepCorrelationCard';
-import { useAICoachData } from '../hooks/useAICoachData';
+import { useAICoachData } from '@/frontend/hooks/useAICoachData';
 
 const AICoach: React.FC = () => {
   const { dailyLogs, isLoading, aiCache } = useAppStore();

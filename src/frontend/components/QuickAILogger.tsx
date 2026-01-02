@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import { useAppStore } from '../stores/useAppStore';
-import { parseNaturalLanguageLog } from '../services/geminiService';
+import { useAppStore } from '@/frontend/stores/useAppStore';
+import { parseNaturalLanguageLog } from '@/backend/services/geminiService';
 
 const QuickAILogger: React.FC = () => {
   const [text, setText] = useState('');

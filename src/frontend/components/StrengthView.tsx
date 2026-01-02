@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useStrengthData } from '../hooks/useStrengthData';
+import { useStrengthData } from '@/frontend/hooks/useStrengthData';
 import {
   StrengthTabs,
   ExerciseTracker,

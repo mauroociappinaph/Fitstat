@@ -1,8 +1,8 @@
 
 import { useMemo } from 'react';
-import { useAppStore } from '../stores/useAppStore';
-import { calculateAdaptiveTDEE, getMacroTargets, calculateReadiness } from '../utils/healthMath';
-import { DailyLog } from '../types';
+import { useAppStore } from '@/frontend/stores/useAppStore';
+import { calculateAdaptiveTDEE, getMacroTargets, calculateReadiness } from '@/shared/utils/healthMath';
+import { DailyLog } from '@/shared/types';
 
 export const useBiometrics = () => {
   const { dailyLogs, profile, selectedDate } = useAppStore();

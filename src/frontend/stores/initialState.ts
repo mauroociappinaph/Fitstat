@@ -1,5 +1,5 @@
 
-import { DailyLog, UserProfile, StrengthSet } from '../types';
+import { DailyLog, UserProfile, StrengthSet } from '@/shared/types';
 import { AICache } from './types';
 
 export const getLocalDateString = () => {

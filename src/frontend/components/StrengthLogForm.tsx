@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import { useAppStore } from '../stores/useAppStore';
-import { StrengthSet } from '../types';
+import { useAppStore } from '@/frontend/stores/useAppStore';
+import { StrengthSet } from '@/shared/types';
 
 const StrengthLogForm: React.FC = () => {
   const { addStrengthLog } = useAppStore();

@@ -1,5 +1,5 @@
 
-import { DailyLog, UserProfile, MealEntry } from '../types';
+import { DailyLog, UserProfile, MealEntry } from '@/shared/types';
 
 export const validateBiometrics = (data: Partial<DailyLog>) => {
   const errors: string[] = [];
