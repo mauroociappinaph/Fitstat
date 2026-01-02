@@ -1,17 +1,17 @@
 
 import React, { useState, Suspense, useMemo } from 'react';
-import Layout from './components/Layout';
-import { useAppStore } from './stores/useAppStore';
+import Layout from '@/frontend/components/Layout';
+import { useAppStore } from '@/frontend/stores/useAppStore';
 
 // Lazy loading de todos los módulos del sistema
-const Dashboard = React.lazy(() => import('./components/Dashboard'));
-const TrainingHub = React.lazy(() => import('./components/TrainingHub'));
-const NutritionHub = React.lazy(() => import('./components/NutritionHub'));
-const DailyLogForm = React.lazy(() => import('./components/DailyLogForm'));
-const ProtocolView = React.lazy(() => import('./components/ProtocolView'));
-const AICoach = React.lazy(() => import('./components/AICoach'));
-const FitStatChat = React.lazy(() => import('./components/FitStatChat'));
-const SettingsView = React.lazy(() => import('./components/SettingsView'));
+const Dashboard = React.lazy(() => import('@/frontend/components/Dashboard'));
+const TrainingHub = React.lazy(() => import('@/frontend/components/TrainingHub'));
+const NutritionHub = React.lazy(() => import('@/frontend/components/NutritionHub'));
+const DailyLogForm = React.lazy(() => import('@/frontend/components/DailyLogForm'));
+const ProtocolView = React.lazy(() => import('@/frontend/components/ProtocolView'));
+const AICoach = React.lazy(() => import('@/frontend/components/AICoach'));
+const FitStatChat = React.lazy(() => import('@/frontend/components/FitStatChat'));
+const SettingsView = React.lazy(() => import('@/frontend/components/SettingsView'));
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard');

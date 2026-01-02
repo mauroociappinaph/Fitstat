@@ -1,13 +1,14 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { DailyLog } from '../types';
-import { AppState } from './types';
-import { INITIAL_AICACHE, DEFAULT_PROFILE, MASTER_DATASET, MASTER_STRENGTH_DATASET, getLocalDateString } from './initialState';
+import { DailyLog } from '@/shared/types';
+import { AppState } from '@/frontend/stores/types';
+import { INITIAL_AICACHE, DEFAULT_PROFILE, MASTER_DATASET, MASTER_STRENGTH_DATASET, getLocalDateString } from '@/frontend/stores/initialState';
 
 export const useAppStore = create<AppState>()(
   persist(
     (set, get) => ({
+      // --- STATE ---
       profile: DEFAULT_PROFILE,
       dailyLogs: MASTER_DATASET,
       strengthLogs: MASTER_STRENGTH_DATASET,
@@ -17,7 +18,9 @@ export const useAppStore = create<AppState>()(
       isLoading: false,
       _hasHydrated: false,
 
+      // --- ACTIONS ---
       setHasHydrated: (state) => set({ _hasHydrated: state }),
+      
       setSelectedDate: (date) => set({ selectedDate: date }),
       
       addDailyLog: (logData) => set((state) => {
@@ -40,7 +43,7 @@ export const useAppStore = create<AppState>()(
 
         return { 
           dailyLogs: newLogs.sort((a, b) => b.date.localeCompare(a.date)),
-          aiCache: { ...state.aiCache, predictions: null, nutritionAdvice: null, dailyAudits: {} }
+          aiCache: { ...state.aiCache, predictions: null, cardioProjections: [], advancedCardioInsights: null }
         };
       }),
 
@@ -55,16 +58,22 @@ export const useAppStore = create<AppState>()(
       })),
 
       setProfile: (profile) => set({ profile, aiCache: INITIAL_AICACHE }),
+      
       setLoading: (loading) => set({ isLoading: loading }),
+      
       setAiCache: (update) => set((state) => ({ aiCache: { ...state.aiCache, ...update } })),
+      
       setChatHistory: (chatHistory) => set({ chatHistory }),
+      
       addChatMessage: (msg) => set((state) => ({ chatHistory: [...state.chatHistory, msg] })),
+      
       importFullState: (newState) => set({ 
         profile: newState.profile, 
         dailyLogs: newState.dailyLogs, 
         strengthLogs: newState.strengthLogs,
         aiCache: INITIAL_AICACHE
       }),
+
       resetToInitial: () => set({
         profile: DEFAULT_PROFILE,
         dailyLogs: MASTER_DATASET,
@@ -75,9 +84,11 @@ export const useAppStore = create<AppState>()(
       }),
     }),
     {
-      name: 'fitstat-enterprise-storage-v11', // Incrementado para forzar sync
+      name: 'fitstat-elite-storage-v9', 
       storage: createJSONStorage(() => localStorage),
-      onRehydrateStorage: () => (state) => { state?.setHasHydrated(true); },
+      onRehydrateStorage: () => (state) => { 
+        state?.setHasHydrated(true); 
+      },
     }
   )
 );
