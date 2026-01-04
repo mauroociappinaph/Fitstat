@@ -1,8 +1,8 @@
 
 import { useState, useMemo } from 'react';
 import { useAppStore } from '@/frontend/stores/useAppStore';
-import { MASTER_PLAN } from '../constants/masterPlan';
-import { ROUTINES } from '../constants/routines';
+import { MASTER_PLAN } from '@/shared/constants/masterPlan';
+import { ROUTINES } from '@/shared/constants/routines';
 import { ExerciseTemplate } from '@/shared/types';
 
 export const useProtocolData = () => {

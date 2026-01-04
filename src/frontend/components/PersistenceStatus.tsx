@@ -22,10 +22,10 @@ export const PersistenceStatus: React.FC = () => {
     }
   }
 
-  const getStatusColor = () => {
-    if (!syncStatus.isOnline) return 'red'
-    if (syncStatus.pendingChanges > 0) return 'yellow'
-    return 'green'
+  const getStatusType = (): 'success' | 'warning' | 'danger' => {
+    if (!syncStatus.isOnline) return 'danger'
+    if (syncStatus.pendingChanges > 0) return 'warning'
+    return 'success'
   }
 
   const getStatusText = () => {
@@ -38,9 +38,7 @@ export const PersistenceStatus: React.FC = () => {
     <GlassCard className="p-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <StatusBadge status={getStatusColor()}>
-            {getStatusText()}
-          </StatusBadge>
+          <StatusBadge type={getStatusType()} label={getStatusText()} />
 
           {syncStatus.lastSync && (
             <span className="text-sm text-gray-400">

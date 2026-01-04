@@ -1,7 +1,7 @@
 
 import React, { useMemo, useState, useEffect } from 'react';
 import { useAppStore } from '@/frontend/stores/useAppStore';
-import { MASTER_PLAN } from '../constants/masterPlan';
+import { MASTER_PLAN } from '@/shared/constants/masterPlan';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { getNutritionFeedback } from '@/backend/services/geminiService';
 import AIFeedbackDisplay from './AIFeedbackDisplay';

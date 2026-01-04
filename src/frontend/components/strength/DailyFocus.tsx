@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ExerciseTemplate } from '../../types';
+import { ExerciseTemplate } from '@/shared/types';
 
 interface Props {
   exercises: ExerciseTemplate[];
