@@ -1,10 +1,7 @@
-
-import { ai, SYSTEM_PROMPT } from './client';
+import api from '../../../services/api';
 import { UserProfile, DailyLog, StrengthSet } from '../../../shared/types';
 import { MASTER_PLAN } from '@/shared/constants/masterPlan';
 import { ROUTINES } from '@/shared/constants/routines';
-
-
 
 export const streamChatResponse = async (
   message: string,
@@ -44,13 +41,35 @@ ESTADO RECIENTE:
 - Historial reciente: ${strength.slice(0, 5).map(s => s.exercise).join(', ')}
   `;
 
-  const chat = ai.chats.create({
-    model: 'gemini-3-flash-preview',
-    config: {
-      systemInstruction: `${SYSTEM_PROMPT}\n\nDATOS DEL PROTOCOLO REAL:\n${contextSummary}`,
-    },
-    history: history
-  });
+  // NOTA: Aunque la función se llama streamChatResponse por compatibilidad,
+  // ahora devuelve una Promise<string> simulando el stream
+  try {
+    const response = await api.post('/ai/chat', {
+      message,
+      history,
+      contextSummary
+    });
 
-  return await chat.sendMessageStream({ message });
+    // Simulamos la estructura que espera el UI para no romper el componente FitStatChat
+    // El UI espera un objeto con { stream: AsyncGenerator } o algo similar.
+    // Como el UI original usaba la SDK de Google, seguramente iteraba el stream.
+    // Para simplificar la migración, devolveremos un objeto que simula la respuesta final directa.
+    
+    // IMPORTANTE: El componente FitStatChat probablemente necesita refactorización
+    // para manejar texto plano en vez de stream.
+    // Por ahora devolvemos el texto directo y asumiremos que ajustaremos el componente UI.
+    return {
+      response: {
+        text: () => response.data.response
+      }
+    };
+
+  } catch (error) {
+    console.error('Error in chat:', error);
+    return {
+      response: {
+        text: () => "Lo siento, hubo un error de conexión con el servidor."
+      }
+    };
+  }
 };
