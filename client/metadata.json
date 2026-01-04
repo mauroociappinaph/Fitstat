@@ -1,7 +1,0 @@
-{
-  "name": "FitStat AI",
-  "description": "An intelligent fitness and nutrition tracking app specializing in dynamic statistics and predictive health analysis.",
-  "requestFramePermissions": [
-    "geolocation"
-  ]
-}
