@@ -1,13 +1,18 @@
 
 import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface LayoutProps {
   children: React.ReactNode;
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab }) => {
+const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Deduce activeTab from pathname
+  const activeTab = location.pathname.substring(1) || 'dashboard';
+
   const tabs = [
     { id: 'dashboard', label: 'Home', icon: '📊' },
     { id: 'protocol', label: 'Plan', icon: '📋' },
@@ -42,7 +47,7 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab }) =>
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => navigate(`/${tab.id}`)}
             className={`flex flex-col items-center gap-1 transition-all duration-300 ${
               activeTab === tab.id ? 'text-cyan-400 scale-110' : 'text-slate-600 hover:text-slate-400'
             }`}
