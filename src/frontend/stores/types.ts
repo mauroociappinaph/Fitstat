@@ -1,4 +1,5 @@
 
+import { Session, User } from '@supabase/supabase-js';
 import { DailyLog, StrengthSet, UserProfile, MealEntry, PredictionData, MetabolicPattern, AIFeedback, AdvancedCardioInsight, SleepCorrelation } from '@/shared/types';
 
 export interface ChatMessage {
@@ -18,6 +19,8 @@ export interface AICache {
 
 export interface AppState {
   // State
+  session: Session | null;
+  user: User | null;
   profile: UserProfile;
   dailyLogs: DailyLog[];
   strengthLogs: StrengthSet[];
@@ -28,6 +31,7 @@ export interface AppState {
   _hasHydrated: boolean;
 
   // Actions
+  setSession: (session: Session | null) => void;
   setHasHydrated: (state: boolean) => void;
   setSelectedDate: (date: string) => void;
   addDailyLog: (logData: Partial<DailyLog> & { date: string }) => void;

@@ -81,8 +81,8 @@ class SyncService {
     this.syncStatus.syncInProgress = true
 
     try {
-      const profile = useAppStore.getState().profile
-      const userId = profile ? `${profile.name}_${profile.initialWeight}_${profile.height}` : 'default_user'
+      const { user } = useAppStore.getState()
+      const userId = user?.id
       if (!userId) {
         return
       }

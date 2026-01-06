@@ -1,9 +1,11 @@
 
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from '@/frontend/components/Layout';
 import ErrorBoundary from '@/frontend/components/common/ErrorBoundary';
+import ProtectedRoute from '@/frontend/components/common/ProtectedRoute';
 import { useAppStore } from '@/frontend/stores/useAppStore';
+import { supabase } from '@/backend/services/supabase';
 
 // Lazy loading para optimizar el bundle inicial
 const Dashboard = React.lazy(() => import('@/frontend/components/Dashboard'));
@@ -19,7 +21,21 @@ const SettingsView = React.lazy(() => import('@/frontend/components/SettingsView
 const AuthView = React.lazy(() => import('@/frontend/components/AuthView'));
 
 const App: React.FC = () => {
-  const { _hasHydrated } = useAppStore();
+  const { _hasHydrated, setSession } = useAppStore();
+
+  useEffect(() => {
+    // 1. Obtener sesión inicial
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    // 2. Escuchar cambios en la autenticación
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [setSession]);
 
   if (!_hasHydrated) {
     return (
@@ -54,21 +70,23 @@ const App: React.FC = () => {
           {/* Public Routes */}
           <Route path="/auth" element={<AuthView />} />
 
-          {/* Protected Routes Wrapper (Manual for now) */}
+          {/* Protected Routes Wrapper */}
           <Route path="/*" element={
-            <Layout>
-              <Routes>
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="protocol" element={<ProtocolView />} />
-                <Route path="nutrition_hub" element={<NutritionHub />} />
-                <Route path="training_hub" element={<TrainingHub />} />
-                <Route path="log" element={<DailyLogForm />} />
-                <Route path="chat" element={<FitStatChat />} />
-                <Route path="ai_insights" element={<AICoach />} />
-                <Route path="settings" element={<SettingsView />} />
-                <Route path="*" element={<Navigate to="/dashboard" replace />} />
-              </Routes>
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <Routes>
+                  <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="protocol" element={<ProtocolView />} />
+                  <Route path="nutrition_hub" element={<NutritionHub />} />
+                  <Route path="training_hub" element={<TrainingHub />} />
+                  <Route path="log" element={<DailyLogForm />} />
+                  <Route path="chat" element={<FitStatChat />} />
+                  <Route path="ai_insights" element={<AICoach />} />
+                  <Route path="settings" element={<SettingsView />} />
+                  <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                </Routes>
+              </Layout>
+            </ProtectedRoute>
           } />
 
           {/* Root Redirect */}
