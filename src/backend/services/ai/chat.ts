@@ -3,6 +3,7 @@ import { ai, SYSTEM_PROMPT } from './client';
 import { UserProfile, DailyLog, StrengthSet } from '../../../shared/types';
 import { MASTER_PLAN } from '@/shared/constants/masterPlan';
 import { ROUTINES } from '@/shared/constants/routines';
+import { sanitizeInput, validateInputSafety } from '@/backend/utils/security';
 
 
 
@@ -52,5 +53,12 @@ ESTADO RECIENTE:
     history: history
   });
 
-  return await chat.sendMessageStream({ message });
+  // Security Check
+  if (!validateInputSafety(message)) {
+    throw new Error("Input rejected due to safety policy.");
+  }
+
+  const cleanMessage = sanitizeInput(message);
+
+  return await chat.sendMessageStream({ message: cleanMessage });
 };

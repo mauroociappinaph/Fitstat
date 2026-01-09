@@ -17,8 +17,12 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchPreds = async () => {
       if (dailyLogs.length >= 3 && !aiCache.predictions) {
-        const preds = await getPredictions(profile, dailyLogs, []);
-        if (preds) setAiCache({ predictions: preds });
+        try {
+          const preds = await getPredictions(profile, dailyLogs, []);
+          if (preds) setAiCache({ predictions: preds });
+        } catch (e) {
+          console.error("Dashboard AI Error:", e);
+        }
       }
     };
     fetchPreds();

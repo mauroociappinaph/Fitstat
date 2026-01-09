@@ -49,9 +49,14 @@ const DailyAudit: React.FC = () => {
       if (todayLog && !cachedTodayFeedback) {
         setIsAnalyzingToday(true);
         // Added dailyLogs as third argument
-        const advice = await getDailyAuditFeedback(todayLog, profile, dailyLogs);
-        if (advice) {
-          setAiCache({ dailyAudits: { ...aiCache.dailyAudits, [todayLog.date]: advice } });
+        try {
+          const advice = await getDailyAuditFeedback(todayLog, profile, dailyLogs);
+          if (advice) {
+            setAiCache({ dailyAudits: { ...aiCache.dailyAudits, [todayLog.date]: advice } });
+          }
+        } catch (err) {
+          console.error("Failed to fetch today's audit:", err);
+          // Optional: Set some error state here if needed in next task
         }
         setIsAnalyzingToday(false);
       }
@@ -61,9 +66,13 @@ const DailyAudit: React.FC = () => {
       if (yesterdayLog && !cachedYesterdayFeedback) {
         setIsAnalyzingYesterday(true);
         // Added dailyLogs as third argument
-        const advice = await getDailyAuditFeedback(yesterdayLog, profile, dailyLogs);
-        if (advice) {
-          setAiCache({ dailyAudits: { ...aiCache.dailyAudits, [yesterdayLog.date]: advice } });
+        try {
+          const advice = await getDailyAuditFeedback(yesterdayLog, profile, dailyLogs);
+          if (advice) {
+            setAiCache({ dailyAudits: { ...aiCache.dailyAudits, [yesterdayLog.date]: advice } });
+          }
+        } catch (err) {
+           console.error("Failed to fetch yesterday's audit:", err);
         }
         setIsAnalyzingYesterday(false);
       }

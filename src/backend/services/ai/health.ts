@@ -30,7 +30,10 @@ export const getPredictions = async (profile: UserProfile, history: DailyLog[], 
       },
     });
     return JSON.parse(response.text || "{}") as PredictionData;
-  } catch (_error) { return null; }
+  } catch (error) {
+    console.error("AI Prediction Error:", error);
+    throw new Error("Failed to generate predictions");
+  }
 };
 
 export const getMetabolicPatterns = async (history: DailyLog[]): Promise<MetabolicPattern[]> => {
@@ -59,7 +62,10 @@ export const getMetabolicPatterns = async (history: DailyLog[]): Promise<Metabol
       }
     });
     return JSON.parse(response.text || "[]");
-  } catch (_e) { return []; }
+  } catch (error) {
+     console.error("AI Pattern Error:", error);
+     throw new Error("Failed to generate metabolic patterns");
+  }
 };
 
 export const getSleepCorrelationAnalysis = async (history: DailyLog[]): Promise<SleepCorrelation | null> => {
@@ -85,7 +91,10 @@ export const getSleepCorrelationAnalysis = async (history: DailyLog[]): Promise<
       }
     });
     return JSON.parse(response.text || "{}") as SleepCorrelation;
-  } catch (_e) { return null; }
+  } catch (error) {
+    console.error("AI Sleep Analysis Error:", error);
+    throw new Error("Failed to analyze sleep correlation");
+  }
 };
 
 export const getDailyAuditFeedback = async (log: DailyLog, profile: UserProfile, history: DailyLog[]): Promise<AIFeedback | null> => {
@@ -132,7 +141,10 @@ INSTRUCCIÓN:
       },
     });
     return JSON.parse(response.text || "{}") as AIFeedback;
-  } catch (_e) { return null; }
+  } catch (error) {
+    console.error("AI Audit Error:", error);
+    throw new Error("Failed to generate daily audit");
+  }
 };
 
 export const getNutritionFeedback = async (current: { p: number, c: number, f: number }, targets: { p: number, c: number, f: number }, phase: string, train: string): Promise<AIFeedback | null> => {
@@ -157,5 +169,8 @@ export const getNutritionFeedback = async (current: { p: number, c: number, f: n
       },
     });
     return JSON.parse(response.text || "{}") as AIFeedback;
-  } catch (_e) { return null; }
+  } catch (error) {
+     console.error("AI Nutrition Feedback Error:", error);
+     throw new Error("Failed to generate nutrition feedback");
+  }
 };
