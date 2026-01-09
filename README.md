@@ -1,32 +1,77 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# FitStat AI
 
-# Run and deploy your AI Studio app
+**FitStat AI** acts as the "Elite Health Architect" & Oracle for the Atlas Load protocol. It is a comprehensive health engineering platform powered by **Google Gemini** to analyze biometric data, track nutrition, and optimize training performance through intelligent, data-driven coaching.
 
-This contains everything you need to run your app locally.
+## 🚀 Key Features
 
-View your app in AI Studio: https://ai.studio/apps/drive/1a4CzyZUANK_YbIttl7g9pHofNtZiP1LZ
+*   **AI-Powered Coaching**: Utilizes Google Gemini to provide personalized daily audits, nutritional feedback, and training insights with a "Health Architect" persona.
+*   **Comprehensive Tracking**: Log and visualize Daily Biometrics, Nutrition (Macros), Strength Training, and Cardio Sessions.
+*   **Data Visualization**: Interactive charts for metabolic balance, biometric trends, and performance metrics using `Recharts`.
+*   **Protocol Management**: Tracks adherence to the "Master Plan" phases and daily routines.
+*   **Modern Tech Stack**: Built with React, Vite, and specific architectural choices for performance and scalability.
 
-## Run Locally
+## 🛠 Tech Stack
 
-**Prerequisites:** Node.js
+*   **Frontend**: React, TypeScript, Vite
+*   **State Management**: Zustand
+*   **Styling**: TailwindCSS
+*   **AI Integration**: Google GenAI SDK (`@google/genai`)
+*   **Backend / Persistence**: Supabase
+*   **Testing**: Vitest, React Testing Library
+*   **Quality**: ESLint, Prettier
 
-1.  Install dependencies:
-    `npm install`
-2.  Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3.  Run the app:
-    `npm run dev`
+## 📦 Getting Started
 
-## Development Commands
+### Prerequisites
+*   **Node.js**: v18.0.0+
+*   **NPM**: Package manager
+*   **Supabase**: Project credentials
+*   **Gemini API Key**: Required for AI features
 
--   **Linting**: `npm run lint` - Check for code quality issues.
--   **Testing**: `npm run test` - Run automated tests.
--   **Build**: `npm run build` - Build the application for production.
+### Installation
 
-## Production Status
+1.  **Clone the repository**
+    ```bash
+    git clone <repository-url>
+    cd Fitstat
+    ```
 
-This project is configured with:
--   **CI/CD**: GitHub Actions workflow for automated checks.
--   **Code Quality**: ESLint + Prettier.
--   **Testing**: Vitest integration.
+2.  **Install dependencies**
+    ```bash
+    npm install
+    ```
+
+3.  **Configure Environment**
+    Create a `.env` file in the root directory with your keys:
+    ```env
+    VITE_GEMINI_API_KEY=your_gemini_api_key
+    VITE_SUPABASE_URL=your_supabase_url
+    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+    ```
+
+4.  **Run Locally**
+    Start the development server:
+    ```bash
+    npm run dev
+    ```
+
+## 💻 Development Commands
+
+| Command | Description |
+| :--- | :--- |
+| `npm run dev` | Start local development server |
+| `npm run build` | Build the project for production |
+| `npm run preview` | Preview the production build locally |
+| `npm run lint` | Run ESLint to check for code quality issues |
+| `npm run test` | Run Test suite with Vitest |
+
+## 📂 Project Structure
+
+*   `src/backend`: Core logic, AI services (`/ai`), and data persistence (`/services`).
+*   `src/frontend`: UI components (`/components`), hooks (`/hooks`), and stores (`/stores`).
+*   `src/shared`: Shared types, constants, and utility functions.
+*   `database`: SQL schemas for Supabase setup.
+
+---
+
+*FitStat AI - Health Engineering Protocol*
