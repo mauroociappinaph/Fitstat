@@ -49,7 +49,7 @@ export const useAppStore = create<AppState>()(
 
         // Async write to IndexedDB
         const finalLog = existingLogIndex >= 0 ? newLogs[existingLogIndex] : newLogs[0];
-        db.dailyLogs.put(finalLog).catch(e => console.error("DB Error:", e));
+        db.dailyLogs.put({ ...finalLog, updated_at: new Date().toISOString() }).catch(e => console.error("DB Error:", e));
 
         return {
           dailyLogs: newLogs.sort((a, b) => b.date.localeCompare(a.date)),
@@ -63,7 +63,7 @@ export const useAppStore = create<AppState>()(
       },
 
       addStrengthLog: (log) => {
-        db.strengthLogs.put(log).catch(e => console.error("DB Error:", e));
+        db.strengthLogs.put({ ...log, updated_at: new Date().toISOString() }).catch(e => console.error("DB Error:", e));
         set((state) => ({
           strengthLogs: [...state.strengthLogs, log],
           aiCache: { ...state.aiCache, predictions: null }

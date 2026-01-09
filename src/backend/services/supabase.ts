@@ -134,6 +134,13 @@ export const db = {
   updateDailyLog: (userId: string, date: string, data: Partial<DailyLog>) =>
     supabase.from('daily_logs').update({ ...data, updated_at: new Date().toISOString() }).eq('user_id', userId).eq('date', date),
 
+  // Batch operations
+  upsertDailyLogs: (logs: Omit<DailyLog, 'id' | 'created_at' | 'updated_at'>[]) =>
+    supabase.from('daily_logs').upsert(logs.map(l => ({ ...l, updated_at: new Date().toISOString() }))),
+
+  getDailyLogsSince: (userId: string, timestamp: string) =>
+    supabase.from('daily_logs').select('*').eq('user_id', userId).gt('updated_at', timestamp),
+
   // Meal log operations
   getMealLogs: (userId: string, date: string) =>
     supabase.from('meal_logs').select('*').eq('user_id', userId).eq('date', date).order('created_at', { ascending: true }),
@@ -143,6 +150,12 @@ export const db = {
     supabase.from('meal_logs').update({ ...data, updated_at: new Date().toISOString() }).eq('id', id),
   deleteMealLog: (id: string) => supabase.from('meal_logs').delete().eq('id', id),
 
+  upsertMealLogs: (logs: Omit<MealLog, 'id' | 'created_at' | 'updated_at'>[]) =>
+    supabase.from('meal_logs').upsert(logs.map(l => ({ ...l, updated_at: new Date().toISOString() }))),
+
+  getMealLogsSince: (userId: string, timestamp: string) =>
+    supabase.from('meal_logs').select('*').eq('user_id', userId).gt('updated_at', timestamp),
+
   // Strength log operations
   getStrengthLogs: (userId: string, date: string) =>
     supabase.from('strength_logs').select('*').eq('user_id', userId).eq('date', date).order('created_at', { ascending: true }),
@@ -151,6 +164,12 @@ export const db = {
   updateStrengthLog: (id: string, data: Partial<StrengthLog>) =>
     supabase.from('strength_logs').update({ ...data, updated_at: new Date().toISOString() }).eq('id', id),
   deleteStrengthLog: (id: string) => supabase.from('strength_logs').delete().eq('id', id),
+
+  upsertStrengthLogs: (logs: Omit<StrengthLog, 'id' | 'created_at' | 'updated_at'>[]) =>
+    supabase.from('strength_logs').upsert(logs.map(l => ({ ...l, updated_at: new Date().toISOString() }))),
+
+  getStrengthLogsSince: (userId: string, timestamp: string) =>
+    supabase.from('strength_logs').select('*').eq('user_id', userId).gt('updated_at', timestamp),
 
   // Cardio log operations
   getCardioLogs: (userId: string, date: string) =>

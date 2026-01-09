@@ -7,9 +7,9 @@ export interface UserProfileEntity extends UserProfile {
 }
 
 export class FitStatDatabase extends Dexie {
-  dailyLogs!: Table<DailyLog>;
-  strengthLogs!: Table<StrengthSet>;
-  userProfile!: Table<UserProfileEntity>;
+  dailyLogs!: Table<DailyLog & { updated_at?: string }>;
+  strengthLogs!: Table<StrengthSet & { updated_at?: string }>;
+  userProfile!: Table<UserProfileEntity & { updated_at?: string }>;
 
   constructor() {
     super('FitStatDB');

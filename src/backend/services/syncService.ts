@@ -144,98 +144,180 @@ class SyncService {
   }
 
   private async syncDailyLogs(userId: string): Promise<void> {
-    const localLogs = await this.getLocalDailyLogs(userId)
+    const lastSync = this.syncStatus.lastSync || new Date(0).toISOString()
 
-    for (const log of localLogs) {
-      const { data: remoteLog } = await db.getDailyLog(userId, log.date)
+    // 1. Get Local Deltas
+    const allLocal = await this.getLocalDailyLogs(userId)
+    const deltaLocal = allLocal.filter(l => (l as any).updated_at && (l as any).updated_at > lastSync)
 
-      // Map SharedDailyLog to Supabase DailyLog (omit meals)
-      const logForDb: Omit<DailyLog, 'id' | 'created_at' | 'updated_at'> = {
-          user_id: userId,
-          date: log.date,
-          weight: log.weight,
-          sleep_hours: log.sleepHours,
-          // Map other fields... simplified for brevity, assuming properties match or are optional
-          // If properties differ significantly, more mapping is needed.
-          // For now, casting for audit task (Persistence)
-          ...log as any
-      };
+    // 2. Get Remote Deltas
+    const { data: deltaRemote } = await db.getDailyLogsSince(userId, lastSync)
 
-      if (!remoteLog) {
-        await db.createDailyLog(logForDb)
-      } else {
-        // Comparison logic simplified
-        await db.updateDailyLog(userId, log.date, logForDb)
-        // Note: Real implementation needs strict field mapping and timestamp check
+    // 3. Conflict Resolution & Push
+    const toPush = deltaLocal.filter(l => {
+      const remoteConflict = deltaRemote?.find(r => r.date === l.date)
+      if (remoteConflict && remoteConflict.updated_at > ((l as any).updated_at || '')) {
+         return false
       }
+      return true
+    })
+
+    if (toPush.length > 0) {
+      const batch = toPush.map(l => ({
+         user_id: userId,
+         date: l.date,
+         weight: l.weight,
+         sleep_hours: l.sleepHours,
+         updated_at: (l as any).updated_at,
+         // Map other fields as needed, using casting for now
+         ...l as any
+      }))
+      await db.upsertDailyLogs(batch)
+    }
+
+    // 4. Pull & Merge
+    if (deltaRemote && deltaRemote.length > 0) {
+       const dates = deltaRemote.map(r => r.date)
+       const existing = await dexie.dailyLogs.bulkGet(dates)
+
+       const merged = deltaRemote.map((r, i) => {
+         // Merge remote fields into existing local object (preserving meals if not present in remote)
+         const local = existing[i] || {}
+         return { ...local, ...r }
+       })
+
+       await dexie.dailyLogs.bulkPut(merged)
     }
   }
 
   private async syncMealLogs(userId: string): Promise<void> {
-    const localLogs = await this.getLocalMealLogs(userId)
+    const lastSync = this.syncStatus.lastSync || new Date(0).toISOString()
 
-    for (const log of localLogs) {
-      if (!log.id) {
-        // Create new log
-        await db.createMealLog(log)
-      } else {
-        const { data: remoteLog } = await db.getMealLogs(userId, log.date)
-        const existingLog = remoteLog?.find(l => l.id === log.id)
+    // 1. Get Local Deltas (meals from modified daily logs)
+    // We infer meal changes from daily log changes
+    const allLocalDaily = await dexie.dailyLogs.toArray()
+    const modifiedDaily = allLocalDaily.filter(l => (l as any).updated_at && (l as any).updated_at > lastSync)
 
-        if (!existingLog) {
-          await db.createMealLog(log)
-        } else {
-          const localUpdated = new Date(log.updated_at)
-          const remoteUpdated = new Date(existingLog.updated_at)
+    const deltaLocalMeals: Omit<MealLog, 'id' | 'created_at' | 'updated_at'>[] = []
 
-          if (localUpdated > remoteUpdated) {
-            await db.updateMealLog(log.id, log)
-          } else {
-             // In complex object mapping, we might skip updating local from remote for nested meals
-             // unless we implement deep merge logic in `setLocalDailyLog`
-             // For audit fix, we allow remote to win but need logic to put it back into DailyLog
-             await this.setLocalMealLog(userId, log.date, existingLog)
-          }
-        }
+    modifiedDaily.forEach(log => {
+      if (log.meals) {
+        log.meals.forEach(m => {
+          deltaLocalMeals.push({
+             user_id: userId,
+             date: log.date,
+             meal_type: m.type === 'Desayuno' ? 'breakfast' :
+                        m.type === 'Almuerzo' ? 'lunch' :
+                        m.type === 'Cena' ? 'dinner' : 'snack',
+             name: 'Comida',
+             calories: m.calories,
+             protein: m.protein,
+             carbs: m.carbs,
+             fat: m.fats,
+             // Shared types might not have matching props
+             ...m
+          })
+        })
       }
+    })
+
+    // 2. Get Remote Deltas
+    const { data: deltaRemote } = await db.getMealLogsSince(userId, lastSync)
+
+    // 3. Push Local
+    // Simple push of all "modified" meals. Upsert handles updates.
+    if (deltaLocalMeals.length > 0) {
+      await db.upsertMealLogs(deltaLocalMeals)
+    }
+
+    // 4. Pull & Merge Remote
+    if (deltaRemote && deltaRemote.length > 0) {
+       // Group by date to minimize DB reads
+       const mealsByDate = deltaRemote.reduce((acc, m) => {
+         acc[m.date] = acc[m.date] || []
+         acc[m.date].push(m)
+         return acc
+       }, {} as Record<string, MealLog[]>)
+
+       const dates = Object.keys(mealsByDate)
+       const existingLogs = await dexie.dailyLogs.bulkGet(dates)
+
+       const toUpdate: any[] = []
+
+       dates.forEach((date, i) => {
+         const log = existingLogs[i]
+         if (log) {
+           const remoteMealsForDate = mealsByDate[date]
+           // Merge logic: Update existing meals by ID, add new ones
+           const currentMeals = log.meals || []
+
+           remoteMealsForDate.forEach(rm => {
+             const existingIdx = currentMeals.findIndex(cm => cm.id === rm.id)
+             const mappedMeal = {
+                id: rm.id,
+                type: rm.meal_type === 'breakfast' ? 'Desayuno' :
+                      rm.meal_type === 'lunch' ? 'Almuerzo' :
+                      rm.meal_type === 'dinner' ? 'Cena' : 'Merienda',
+                protein: rm.protein || 0,
+                carbs: rm.carbs || 0,
+                fats: rm.fat || 0,
+                calories: rm.calories || 0,
+                timestamp: rm.updated_at
+             } as any // Simplified casting
+
+             if (existingIdx >= 0) {
+               currentMeals[existingIdx] = { ...currentMeals[existingIdx], ...mappedMeal }
+             } else {
+               currentMeals.push(mappedMeal)
+             }
+           })
+
+           toUpdate.push({ ...log, meals: currentMeals, updated_at: new Date().toISOString() })
+         }
+       })
+
+       if (toUpdate.length > 0) {
+         await dexie.dailyLogs.bulkPut(toUpdate)
+       }
     }
   }
 
   private async syncStrengthLogs(userId: string): Promise<void> {
-    const localLogs = await this.getLocalStrengthLogs(userId)
+    const lastSync = this.syncStatus.lastSync || new Date(0).toISOString()
 
-    for (const log of localLogs) {
-      const logForDb: Omit<StrengthLog, 'id' | 'created_at' | 'updated_at'> = {
+    // 1. Get Local Deltas
+    const allLocal = await this.getLocalStrengthLogs(userId)
+    const deltaLocal = allLocal.filter(l => (l as any).updated_at && (l as any).updated_at > lastSync)
+
+    // 2. Get Remote Deltas
+    const { data: deltaRemote } = await db.getStrengthLogsSince(userId, lastSync)
+
+    // 3. Push Local
+    if (deltaLocal.length > 0) {
+      const batch = deltaLocal.map(l => ({
            user_id: userId,
-           date: log.date,
-           exercise: log.exercise,
-           sets: log.sets,
-           reps: log.reps,
-           // @ts-expect-error Shared typings might miss weight in StrengthSet?
-           weight: log.weight || 0, // Shared typings might miss weight in StrengthSet?
-           // Shared StrengthSet has no 'weight' prop? It has estimatedCalories?
-           // Wait, shared StrengthSet has no 'weight' property??
-           // Let's check shared types again.
-           // Shared StrengthSet: id, date, muscleGroup, exercise, sets, reps, actualReps, rir, tempo, avgHR, estimatedCalories, notes.
-           // IT MISSES WEIGHT!
-           // Supabase StrengthLog has `weight`.
-           // Ensure mapping handles this.
-           ...log as any
-      };
+           date: l.date,
+           exercise: l.exercise,
+           sets: l.sets,
+           reps: l.reps,
 
-      const { data: remoteLogs } = await db.getStrengthLogs(userId, log.date)
-      const existingRemote = remoteLogs?.find(r => r.id === log.id) // Assuming ID matches?
-
-      if (!existingRemote) {
-         // Create logic...
-         await db.createStrengthLog(logForDb)
-      } else {
-         // Update logic...
-         await db.updateStrengthLog(existingRemote.id, logForDb)
-      }
+           weight: (l as any).weight || 0,
+           ...l as any
+      }))
+      await db.upsertStrengthLogs(batch)
     }
-    // Note: This simplification skips full bi-directional sync logic for brevity in this Audit task
-    // Real implementation requires detailed field mapping.
+
+    // 4. Pull Remote
+    if (deltaRemote && deltaRemote.length > 0) {
+       // Simple overwrite for now (Last Write Wins from Remote)
+       // Map to local
+       const mapped = deltaRemote.map(r => ({
+          ...r,
+          // Map back fields if needed
+       } as any))
+
+       await dexie.strengthLogs.bulkPut(mapped)
+    }
   }
 
   private async syncCardioLogs(userId: string): Promise<void> {
