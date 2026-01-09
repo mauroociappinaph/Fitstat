@@ -1,18 +1,41 @@
 
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppStore } from '@/frontend/stores/useAppStore';
 import { MASTER_PLAN } from '@/shared/constants/masterPlan';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { getNutritionFeedback } from '@/backend/services/geminiService';
 import AIFeedbackDisplay from './AIFeedbackDisplay';
 import { useBiometrics } from '@/frontend/hooks/useBiometrics';
 
+const AdherenceBar = ({ label, current, target, color, unit, sub }: any) => {
+  const percent = Math.min(Math.round((current / (target || 1)) * 100), 115);
+  return (
+    <div className="space-y-2">
+      <div className="flex justify-between items-end">
+         <div>
+            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{label}</p>
+            <p className="text-xl font-black text-white">{current}<span className="text-[10px] text-slate-500 ml-1">{unit}</span></p>
+         </div>
+         <div className="text-right">
+            <p className="text-[9px] font-bold text-slate-600 uppercase">{sub || `Target: ${target}${unit}`}</p>
+            <p className={`text-[10px] font-black ${percent > 105 ? 'text-rose-500' : percent > 90 ? 'text-emerald-400' : 'text-cyan-400'}`}>{percent}%</p>
+         </div>
+      </div>
+      <div className="h-2 w-full bg-slate-900 rounded-full border border-slate-800 overflow-hidden">
+         <div className={`h-full transition-all duration-1000 ${color}`} style={{ width: `${Math.min(percent, 100)}%` }}></div>
+      </div>
+    </div>
+  );
+};
+
+
 const NutritionView: React.FC = () => {
   const { setAiCache, aiCache } = useAppStore();
-  const { currentLog, targets, nutritionTotals, profile, selectedDate } = useBiometrics();
+  const { currentLog, targets, nutritionTotals, profile } = useBiometrics();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [mounted, setMounted] = useState(false);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setMounted(true); }, []);
 
   const startDate = new Date(profile.startDate);
@@ -35,26 +58,8 @@ const NutritionView: React.FC = () => {
     { name: 'TARGET', Prot: targets.p, Carb: targets.c, Gras: targets.f }
   ];
 
-  const AdherenceBar = ({ label, current, target, color, unit, sub }: any) => {
-    const percent = Math.min(Math.round((current / (target || 1)) * 100), 115);
-    return (
-      <div className="space-y-2">
-        <div className="flex justify-between items-end">
-           <div>
-              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{label}</p>
-              <p className="text-xl font-black text-white">{current}<span className="text-[10px] text-slate-500 ml-1">{unit}</span></p>
-           </div>
-           <div className="text-right">
-              <p className="text-[9px] font-bold text-slate-600 uppercase">{sub || `Target: ${target}${unit}`}</p>
-              <p className={`text-[10px] font-black ${percent > 105 ? 'text-rose-500' : percent > 90 ? 'text-emerald-400' : 'text-cyan-400'}`}>{percent}%</p>
-           </div>
-        </div>
-        <div className="h-2 w-full bg-slate-900 rounded-full border border-slate-800 overflow-hidden">
-           <div className={`h-full transition-all duration-1000 ${color}`} style={{ width: `${Math.min(percent, 100)}%` }}></div>
-        </div>
-      </div>
-    );
-  };
+
+
 
   return (
     <div className="space-y-10 animate-in fade-in duration-500 pb-28">

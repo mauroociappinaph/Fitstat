@@ -8,7 +8,7 @@ import { ROUTINES } from '@/shared/constants/routines';
 
 export const streamChatResponse = async (
   message: string,
-  history: any[],
+  history: Array<{ role: string; parts: Array<{ text: string }> }>,
   profile: UserProfile,
   logs: DailyLog[],
   strength: StrengthSet[],
@@ -21,7 +21,7 @@ export const streamChatResponse = async (
 
   const dayNames = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
   const dayName = dayNames[currentDate.getDay()];
-  const routineName = (currentPhase.routines as any)[dayName];
+  const routineName = (currentPhase.routines as Record<string, string>)[dayName];
   const todayExercises = ROUTINES[routineName] || [];
 
   const contextSummary = `

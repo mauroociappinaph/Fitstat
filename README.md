@@ -10,11 +10,23 @@ View your app in AI Studio: https://ai.studio/apps/drive/1a4CzyZUANK_YbIttl7g9pH
 
 ## Run Locally
 
-**Prerequisites:**  Node.js
+**Prerequisites:** Node.js
 
+1.  Install dependencies:
+    `npm install`
+2.  Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3.  Run the app:
+    `npm run dev`
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Development Commands
+
+-   **Linting**: `npm run lint` - Check for code quality issues.
+-   **Testing**: `npm run test` - Run automated tests.
+-   **Build**: `npm run build` - Build the application for production.
+
+## Production Status
+
+This project is configured with:
+-   **CI/CD**: GitHub Actions workflow for automated checks.
+-   **Code Quality**: ESLint + Prettier.
+-   **Testing**: Vitest integration.

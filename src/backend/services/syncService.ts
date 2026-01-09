@@ -1,4 +1,4 @@
-import { supabase, db } from './supabase'
+import { db } from './supabase'
 import { useAppStore } from '../../frontend/stores/useAppStore'
 import type {
   UserProfile,

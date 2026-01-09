@@ -16,7 +16,7 @@ const MealLogView: React.FC = () => {
       const existing = currentDayLog?.meals?.find(m => m.type === type);
       return existing || {
         id: crypto.randomUUID(),
-        type: type as any,
+        type: type as typeof MEAL_TYPES[number],
         protein: 0,
         carbs: 0,
         fats: 0,
@@ -59,11 +59,11 @@ const MealLogView: React.FC = () => {
           {currentMeals.map((meal, idx) => (
             <div key={meal.id} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center group">
               <div className="md:col-span-3 flex items-center gap-3">
-                <input 
-                  type="time" 
-                  value={meal.timestamp} 
-                  onChange={(e) => handleMealChange(idx, 'timestamp', e.target.value)} 
-                  className="bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-[10px] text-slate-500 font-bold outline-none focus:border-cyan-500/30" 
+                <input
+                  type="time"
+                  value={meal.timestamp}
+                  onChange={(e) => handleMealChange(idx, 'timestamp', e.target.value)}
+                  className="bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-[10px] text-slate-500 font-bold outline-none focus:border-cyan-500/30"
                 />
                 <span className="text-xs font-black text-white uppercase group-hover:text-cyan-400 transition-colors">{meal.type}</span>
               </div>
@@ -87,12 +87,12 @@ const MealLogView: React.FC = () => {
             </div>
           ))}
         </div>
-        
+
         <div className="bg-slate-900/80 p-8 border-t border-slate-800 grid grid-cols-4 gap-4">
            {[
-             {v: totals.p, l: 'PROTEÍNA', c: 'text-emerald-400', u: 'g'}, 
-             {v: totals.c, l: 'CARBOS', c: 'text-cyan-400', u: 'g'}, 
-             {v: totals.f, l: 'GRASAS', c: 'text-amber-400', u: 'g'}, 
+             {v: totals.p, l: 'PROTEÍNA', c: 'text-emerald-400', u: 'g'},
+             {v: totals.c, l: 'CARBOS', c: 'text-cyan-400', u: 'g'},
+             {v: totals.f, l: 'GRASAS', c: 'text-amber-400', u: 'g'},
              {v: totals.kcal, l: 'TOTAL KCAL', c: 'text-white', u: ''}
            ].map((t, i) => (
              <div key={i} className="text-center group">

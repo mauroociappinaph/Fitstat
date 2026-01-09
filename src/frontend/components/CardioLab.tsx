@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useCardioData } from '@/frontend/hooks/useCardioData';
 import EfficiencyHero from './cardio/EfficiencyHero';
@@ -11,12 +11,8 @@ type SubTab = 'lab' | 'history' | 'projections';
 
 const CardioLab: React.FC = () => {
   const [activeSubTab, setActiveSubTab] = useState<SubTab>('lab');
-  const [mounted, setMounted] = useState(false);
+  const [mounted] = useState(true);
   const data = useCardioData(activeSubTab);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   if (!data.latestSession) {
     return (
@@ -72,13 +68,13 @@ const CardioLab: React.FC = () => {
 
       {activeSubTab === 'lab' && (
         <div className="space-y-8 animate-in fade-in duration-500">
-          <EfficiencyHero 
-            efficiency={data.currentEfficiency} 
-            baseline={data.baselineEfficiency} 
-            delta={data.baselineDelta} 
-            diagnostic={getDiagnostic()} 
+          <EfficiencyHero
+            efficiency={data.currentEfficiency}
+            baseline={data.baselineEfficiency}
+            delta={data.baselineDelta}
+            diagnostic={getDiagnostic()}
           />
-          
+
           <div className="space-y-6">
             <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter px-1">Executive Analysis</h3>
             <ExecutiveInsights insights={data.aiCache.advancedCardioInsights} isLoading={data.isLoadingInsights} />

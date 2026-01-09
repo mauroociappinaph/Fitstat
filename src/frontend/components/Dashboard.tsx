@@ -22,18 +22,18 @@ const Dashboard: React.FC = () => {
       }
     };
     fetchPreds();
-  }, [dailyLogs.length, aiCache.predictions, profile, setAiCache]);
+  }, [dailyLogs, aiCache.predictions, profile, setAiCache]);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500 pb-12 min-w-0">
       <DashboardViewSwitcher activeView={activeView} setActiveView={setActiveView} />
 
       {activeView === 'overview' ? (
-        <OverviewView 
-          data={data} 
-          aiCache={aiCache} 
-          profile={profile} 
-          selectedDate={selectedDate} 
+        <OverviewView
+          data={data}
+          aiCache={aiCache}
+          profile={profile}
+          selectedDate={selectedDate}
         />
       ) : (
         <DailyAudit />

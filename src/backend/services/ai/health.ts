@@ -3,7 +3,7 @@ import { ai, SYSTEM_PROMPT } from './client';
 import { Type } from "@google/genai";
 import { DailyLog, UserProfile, PredictionData, MetabolicPattern, AIFeedback, StrengthSet, SleepCorrelation } from "../../../shared/types";
 
-export const getPredictions = async (profile: UserProfile, history: DailyLog[], strengthLogs: StrengthSet[]): Promise<PredictionData | null> => {
+export const getPredictions = async (profile: UserProfile, history: DailyLog[], _strengthLogs: StrengthSet[]): Promise<PredictionData | null> => {
   const prompt = `Análisis predictivo profundo. Perfil: ${JSON.stringify(profile)}, Historial: ${JSON.stringify(history.slice(0,10))}.`;
   try {
     const response = await ai.models.generateContent({
@@ -30,7 +30,7 @@ export const getPredictions = async (profile: UserProfile, history: DailyLog[], 
       },
     });
     return JSON.parse(response.text || "{}") as PredictionData;
-  } catch (error) { return null; }
+  } catch (_error) { return null; }
 };
 
 export const getMetabolicPatterns = async (history: DailyLog[]): Promise<MetabolicPattern[]> => {
@@ -59,7 +59,7 @@ export const getMetabolicPatterns = async (history: DailyLog[]): Promise<Metabol
       }
     });
     return JSON.parse(response.text || "[]");
-  } catch (e) { return []; }
+  } catch (_e) { return []; }
 };
 
 export const getSleepCorrelationAnalysis = async (history: DailyLog[]): Promise<SleepCorrelation | null> => {
@@ -85,7 +85,7 @@ export const getSleepCorrelationAnalysis = async (history: DailyLog[]): Promise<
       }
     });
     return JSON.parse(response.text || "{}") as SleepCorrelation;
-  } catch (e) { return null; }
+  } catch (_e) { return null; }
 };
 
 export const getDailyAuditFeedback = async (log: DailyLog, profile: UserProfile, history: DailyLog[]): Promise<AIFeedback | null> => {
@@ -132,7 +132,7 @@ INSTRUCCIÓN:
       },
     });
     return JSON.parse(response.text || "{}") as AIFeedback;
-  } catch (e) { return null; }
+  } catch (_e) { return null; }
 };
 
 export const getNutritionFeedback = async (current: { p: number, c: number, f: number }, targets: { p: number, c: number, f: number }, phase: string, train: string): Promise<AIFeedback | null> => {
@@ -157,5 +157,5 @@ export const getNutritionFeedback = async (current: { p: number, c: number, f: n
       },
     });
     return JSON.parse(response.text || "{}") as AIFeedback;
-  } catch (e) { return null; }
+  } catch (_e) { return null; }
 };

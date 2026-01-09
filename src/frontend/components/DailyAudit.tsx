@@ -1,7 +1,7 @@
 
 import React, { useMemo, useState, useEffect } from 'react';
 import { useAppStore } from '@/frontend/stores/useAppStore';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell } from 'recharts';
 
 import AIFeedbackDisplay from './AIFeedbackDisplay';
 import { getDailyAuditFeedback } from '../../backend/services/geminiService';
@@ -10,11 +10,7 @@ const DailyAudit: React.FC = () => {
   const { dailyLogs, profile, aiCache, setAiCache } = useAppStore();
   const [isAnalyzingToday, setIsAnalyzingToday] = useState(false);
   const [isAnalyzingYesterday, setIsAnalyzingYesterday] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const [mounted] = useState(true);
 
   const todayLog = dailyLogs[0];
   const yesterdayLog = dailyLogs[1];
@@ -22,7 +18,7 @@ const DailyAudit: React.FC = () => {
   const cachedTodayFeedback = todayLog ? aiCache.dailyAudits[todayLog.date] : null;
   const cachedYesterdayFeedback = yesterdayLog ? aiCache.dailyAudits[yesterdayLog.date] : null;
 
-  const calculateStats = (log: typeof todayLog) => {
+  const calculateStats = React.useCallback((log: typeof todayLog) => {
     if (!log) return null;
     const kcalIn = log.meals?.reduce((acc, m) => acc + (m.calories || 0), 0) || 0;
     const bmr = profile.gender === 'male'
@@ -43,10 +39,10 @@ const DailyAudit: React.FC = () => {
       neat: Math.round(neat),
       exercise: Math.round(exercise)
     };
-  };
+  }, [profile]);
 
-  const todayStats = useMemo(() => calculateStats(todayLog), [todayLog, profile]);
-  const yesterdayStats = useMemo(() => calculateStats(yesterdayLog), [yesterdayLog, profile]);
+  const todayStats = useMemo(() => calculateStats(todayLog), [todayLog, calculateStats]);
+  const yesterdayStats = useMemo(() => calculateStats(yesterdayLog), [yesterdayLog, calculateStats]);
 
   useEffect(() => {
     const fetchTodayAudit = async () => {
@@ -75,7 +71,7 @@ const DailyAudit: React.FC = () => {
 
     fetchTodayAudit();
     fetchYesterdayAudit();
-  }, [todayLog?.date, yesterdayLog?.date, profile, setAiCache, aiCache.dailyAudits, cachedTodayFeedback, cachedYesterdayFeedback, dailyLogs]);
+  }, [todayLog, yesterdayLog, profile, setAiCache, aiCache.dailyAudits, cachedTodayFeedback, cachedYesterdayFeedback, dailyLogs]);
 
   if (!todayStats) return <div className="p-10 text-center uppercase font-black text-slate-500 tracking-[0.3em]">Esperando Datos...</div>;
 

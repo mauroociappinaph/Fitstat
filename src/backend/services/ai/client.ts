@@ -1,7 +1,7 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-const apiKey = process.env.API_KEY || (import.meta as any).env?.VITE_GEMINI_API_KEY || '';
+const apiKey = process.env.API_KEY || (import.meta as { env?: { VITE_GEMINI_API_KEY?: string } }).env?.VITE_GEMINI_API_KEY || '';
 
 if (!apiKey) {
   console.error("❌ CRITICAL ERROR: Gemini API Key is missing. Please check your .env file and vite.config.ts");

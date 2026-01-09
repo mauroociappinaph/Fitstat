@@ -1,9 +1,9 @@
 
 import { ai } from './client';
 import { Type } from "@google/genai";
-import { DailyLog, UserProfile, AdvancedCardioInsight } from "../../../shared/types";
+import { DailyLog, AdvancedCardioInsight } from "../../../shared/types";
 
-export const getCardioProjections = async (history: DailyLog[], profile: UserProfile): Promise<{ date: string, efficiency: number }[]> => {
+export const getCardioProjections = async (history: DailyLog[]): Promise<{ date: string, efficiency: number }[]> => {
   const walkHistory = history
     .filter(log => log.walkActivity && log.walkAvgHR > 0)
     .map(log => ({
@@ -35,10 +35,10 @@ export const getCardioProjections = async (history: DailyLog[], profile: UserPro
       },
     });
     return JSON.parse(response.text || "[]");
-  } catch (e) { return []; }
+  } catch { return []; }
 };
 
-export const getAdvancedCardioInsights = async (history: DailyLog[], profile: UserProfile): Promise<AdvancedCardioInsight | null> => {
+export const getAdvancedCardioInsights = async (history: DailyLog[]): Promise<AdvancedCardioInsight | null> => {
   const walkHistory = history
     .filter(log => log.walkActivity && log.walkAvgHR > 0)
     .map(log => ({
@@ -71,5 +71,5 @@ export const getAdvancedCardioInsights = async (history: DailyLog[], profile: Us
       }
     });
     return JSON.parse(response.text || "{}") as AdvancedCardioInsight;
-  } catch (e) { return null; }
+  } catch { return null; }
 };

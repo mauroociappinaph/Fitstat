@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAppStore } from '@/frontend/stores/useAppStore';
 import { DailyLog } from '@/shared/types';
 import StrengthLogForm from './StrengthLogForm';
@@ -12,51 +12,40 @@ const DailyLogForm: React.FC = () => {
   const { addDailyLog, strengthLogs, dailyLogs, selectedDate, profile } = useAppStore();
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
-  const [formData, setFormData] = useState<Partial<DailyLog>>({
-    date: selectedDate,
-    weight: dailyLogs[0]?.weight || profile.initialWeight,
-    waterMl: 0,
-    steps: 0,
-    sleepHours: 8,
-    trainingDone: false,
-    trainingType: 'Strength',
-    trainingCalories: 0,
-    trainingAvgHR: 0,
-    walkActivity: false,
-    walkDistanceKm: 0,
-    walkDurationMin: 0,
-    walkAvgHR: 0,
-    walkCalories: 0,
-    proteinG: 0,
-  });
 
-  useEffect(() => {
+  const getInitialFormData = (): Partial<DailyLog> => {
     const existingLog = dailyLogs.find(l => l.date === selectedDate);
     if (existingLog) {
-      setFormData(prev => ({ ...prev, ...existingLog }));
-    } else {
-      const lastKnownWeight = dailyLogs[0]?.weight || profile.initialWeight;
-      setFormData({ 
-        date: selectedDate,
-        weight: lastKnownWeight,
-        waterMl: 0,
-        steps: 0,
-        sleepHours: 8,
-        trainingDone: false,
-        trainingType: 'Strength',
-        trainingCalories: 0,
-        trainingAvgHR: 0,
-        walkActivity: false,
-        walkDistanceKm: 0,
-        walkDurationMin: 0,
-        walkAvgHR: 0,
-        walkCalories: 0,
-        proteinG: 0,
-      });
+      return { ...existingLog };
     }
+    return {
+      date: selectedDate,
+      weight: dailyLogs[0]?.weight || profile.initialWeight,
+      waterMl: 0,
+      steps: 0,
+      sleepHours: 8,
+      trainingDone: false,
+      trainingType: 'Strength',
+      trainingCalories: 0,
+      trainingAvgHR: 0,
+      walkActivity: false,
+      walkDistanceKm: 0,
+      walkDurationMin: 0,
+      walkAvgHR: 0,
+      walkCalories: 0,
+      proteinG: 0,
+    };
+  };
+
+  const [formData, setFormData] = useState<Partial<DailyLog>>(getInitialFormData);
+  const [prevSelectedDate, setPrevSelectedDate] = useState(selectedDate);
+
+  // Update formData when selectedDate changes
+  if (selectedDate !== prevSelectedDate) {
+    setPrevSelectedDate(selectedDate);
+    setFormData(getInitialFormData());
     setError(null);
-  }, [selectedDate, dailyLogs, profile.initialWeight]);
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -127,7 +116,7 @@ const DailyLogForm: React.FC = () => {
                   <label htmlFor="train-toggle" className="absolute inset-0 bg-slate-800 rounded-full cursor-pointer peer-checked:bg-cyan-600 transition-all after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:w-4 after:h-4 after:rounded-full after:transition-all peer-checked:after:translate-x-6"></label>
                 </div>
              </div>
-             
+
              {formData.trainingDone && (
                <div className="animate-in slide-in-from-top-2 duration-300 space-y-6 pt-2">
                  <StrengthLogForm />

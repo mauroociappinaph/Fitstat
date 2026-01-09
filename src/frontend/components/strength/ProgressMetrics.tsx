@@ -22,6 +22,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 const ProgressMetrics: React.FC<Props> = ({ volumeHistory, volumeTrend, selectedDate }) => {
   const [mounted, setMounted] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
 
   const todayVolume = volumeHistory.find(h => h.fullDate === selectedDate)?.volume || 0;
@@ -37,7 +38,7 @@ const ProgressMetrics: React.FC<Props> = ({ volumeHistory, volumeTrend, selected
            <h3 className="text-5xl font-black text-white tracking-tighter">{todayVolume}</h3>
            <p className="text-[9px] font-black text-slate-600 uppercase">REPETICIONES TOTALES</p>
         </div>
-        
+
         <div className={`glass p-8 rounded-[2.5rem] border-slate-800 flex flex-col justify-center items-center text-center space-y-2 shadow-xl transition-all ${volumeTrend?.isUp ? 'border-emerald-500/20 bg-emerald-500/5' : 'border-rose-500/20'}`}>
            <div className={`w-10 h-10 rounded-xl ${volumeTrend?.isUp ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'} flex items-center justify-center mb-2`}>
              {volumeTrend?.isUp ? '📈' : '📉'}
@@ -75,43 +76,43 @@ const ProgressMetrics: React.FC<Props> = ({ volumeHistory, volumeTrend, selected
                </div>
             </div>
          </div>
-         
+
          <div className="h-[350px] w-full relative">
             {mounted && volumeHistory.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={volumeHistory} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-                  <XAxis 
-                    dataKey="date" 
-                    stroke="#64748b" 
-                    fontSize={10} 
-                    fontWeight="black" 
-                    tickLine={false} 
-                    axisLine={false} 
-                    dy={10} 
+                  <XAxis
+                    dataKey="date"
+                    stroke="#64748b"
+                    fontSize={10}
+                    fontWeight="black"
+                    tickLine={false}
+                    axisLine={false}
+                    dy={10}
                     interval={Math.ceil(volumeHistory.length / 10)}
                   />
                   <YAxis hide domain={[0, 'dataMax + 20']} />
-                  <Tooltip 
-                    cursor={{fill: 'rgba(255,255,255,0.03)'}} 
+                  <Tooltip
+                    cursor={{fill: 'rgba(255,255,255,0.03)'}}
                     content={<CustomTooltip />}
                   />
                   <Bar dataKey="volume" radius={[12, 12, 0, 0]} barSize={volumeHistory.length > 20 ? 15 : 40} animationDuration={1500}>
                     {volumeHistory.map((entry, index) => (
-                      <Cell 
-                        key={`cell-${index}`} 
-                        fill={entry.fullDate === selectedDate ? '#22d3ee' : '#1e293b'} 
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={entry.fullDate === selectedDate ? '#22d3ee' : '#1e293b'}
                         stroke={entry.fullDate === selectedDate ? '#22d3ee' : '#334155'}
                         strokeWidth={entry.fullDate === selectedDate ? 2 : 1}
                         className="transition-all duration-300"
                       />
                     ))}
                   </Bar>
-                  <ReferenceLine 
-                    y={avgVolume} 
-                    stroke="#64748b" 
-                    strokeDasharray="5 5" 
-                    label={{ position: 'right', value: 'AVG', fill: '#64748b', fontSize: 9, fontWeight: 'black' }} 
+                  <ReferenceLine
+                    y={avgVolume}
+                    stroke="#64748b"
+                    strokeDasharray="5 5"
+                    label={{ position: 'right', value: 'AVG', fill: '#64748b', fontSize: 9, fontWeight: 'black' }}
                   />
                 </BarChart>
               </ResponsiveContainer>
@@ -122,14 +123,14 @@ const ProgressMetrics: React.FC<Props> = ({ volumeHistory, volumeTrend, selected
               </div>
             )}
          </div>
-         
+
          {/* Adaptive Coaching Card */}
          <div className="p-8 bg-blue-500/10 rounded-[2.5rem] border border-blue-500/20 text-center relative overflow-hidden group">
             <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]"></div>
             <p className="text-xs text-slate-300 font-bold italic leading-relaxed px-4">
-              {volumeTrend && volumeTrend.isUp 
-                ? `🚀 PROTOCOLO ÓPTIMO: Has incrementado tu volumen un ${volumeTrend.percent}% respecto a la última sesión. La adaptación hipertrófica está en pico máximo.` 
-                : volumeTrend 
+              {volumeTrend && volumeTrend.isUp
+                ? `🚀 PROTOCOLO ÓPTIMO: Has incrementado tu volumen un ${volumeTrend.percent}% respecto a la última sesión. La adaptación hipertrófica está en pico máximo.`
+                : volumeTrend
                 ? `⚖️ CONTROL DE CARGA: El volumen ha variado un ${volumeTrend.percent}%. Este comportamiento es normal si hoy es un día de técnica o recuperación activa.`
                 : "⚡ Registra al menos dos sesiones en el Atlas para activar el motor de tendencias de sobrecarga progresiva."}
             </p>
