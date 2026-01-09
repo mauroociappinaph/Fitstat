@@ -44,4 +44,5 @@ export interface AppState {
   addChatMessage: (msg: ChatMessage) => void;
   importFullState: (state: { profile: UserProfile, dailyLogs: DailyLog[], strengthLogs: StrengthSet[] }) => void;
   resetToInitial: () => void;
+  initializeFromDb: () => Promise<void>;
 }
