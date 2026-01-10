@@ -13,7 +13,7 @@ const AICoach: React.FC = () => {
   const { dailyLogs, isLoading } = useAppStore();
   const [activeView, setActiveView] = useState<'predictions' | 'audit' | 'coach'>('coach');
 
-  const hasEnoughData = dailyLogs.length >= 3;
+  const hasEnoughData = dailyLogs.length >= 1;
   const { readinessScore, coachAlerts, predictions, patterns, sleepAnalysis } = useAICoachData(hasEnoughData, activeView);
 
   const translateStrength = (s: string) => {

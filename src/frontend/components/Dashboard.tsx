@@ -18,7 +18,7 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     const fetchPreds = async () => {
-      if (dailyLogs.length >= 3 && !aiCache.predictions) {
+      if (dailyLogs.length >= 1 && !aiCache.predictions) {
         try {
           const preds = await getPredictions(profile, dailyLogs, []);
           if (preds) setAiCache({ predictions: preds });

@@ -4,7 +4,8 @@ import { Type } from "@google/genai";
 import { DailyLog, UserProfile, PredictionData, MetabolicPattern, AIFeedback, StrengthSet, SleepCorrelation } from "../../../shared/types";
 
 export const getPredictions = async (profile: UserProfile, history: DailyLog[], _strengthLogs: StrengthSet[]): Promise<PredictionData | null> => {
-  const prompt = `Análisis predictivo profundo. Perfil: ${JSON.stringify(profile)}, Historial: ${JSON.stringify(history.slice(0,10))}.`;
+  const isColdStart = history.length < 3;
+  const prompt = `Análisis predictivo profundo. Perfil: ${JSON.stringify(profile)}, Historial: ${JSON.stringify(history.slice(0,10))}. ${isColdStart ? "NOTA: Historial corto. Genera estimaciones proyectivas basadas en datos fisiológicos teóricos y perfil del usuario." : ""}`;
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
@@ -37,7 +38,8 @@ export const getPredictions = async (profile: UserProfile, history: DailyLog[], 
 };
 
 export const getMetabolicPatterns = async (history: DailyLog[]): Promise<MetabolicPattern[]> => {
-  const prompt = `Identifica 3 patrones metabólicos clave en: ${JSON.stringify(history.slice(0,20))}.`;
+  const isColdStart = history.length < 3;
+  const prompt = `Identifica 3 patrones metabólicos clave en: ${JSON.stringify(history.slice(0,20))}. ${isColdStart ? "NOTA: Pocos datos. Deduce patrones probables basados en el tipo de entrenamiento y dieta registrados hoy." : ""}`;
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
@@ -69,7 +71,8 @@ export const getMetabolicPatterns = async (history: DailyLog[]): Promise<Metabol
 };
 
 export const getSleepCorrelationAnalysis = async (history: DailyLog[]): Promise<SleepCorrelation | null> => {
-  const prompt = `Analiza correlación Sueño vs Pasos/Entrenamiento en: ${JSON.stringify(history.slice(0, 15))}.`;
+  const isColdStart = history.length < 3;
+  const prompt = `Analiza correlación Sueño vs Pasos/Entrenamiento en: ${JSON.stringify(history.slice(0, 15))}. ${isColdStart ? "NOTA: Pocos datos. Analiza el impacto agudo del sueño de anoche en el rendimiento de hoy." : ""}`;
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',

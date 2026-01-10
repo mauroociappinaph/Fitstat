@@ -10,7 +10,7 @@ export const useAICoachData = (hasEnoughData: boolean, activeView: string) => {
   useEffect(() => {
     const fetchAIInsights = async () => {
       if (!hasEnoughData || activeView === 'audit' || (aiCache.predictions && aiCache.patterns.length > 0 && aiCache.sleepAnalysis)) return;
-      
+
       setLoading(true);
       try {
         const [predData, patternsData, sleepData] = await Promise.all([
@@ -27,7 +27,7 @@ export const useAICoachData = (hasEnoughData: boolean, activeView: string) => {
     };
 
     fetchAIInsights();
-  }, [dailyLogs.length, activeView, aiCache.predictions, aiCache.patterns.length, aiCache.sleepAnalysis, hasEnoughData, profile, strengthLogs, setAiCache, setLoading]);
+  }, [dailyLogs.length, activeView, aiCache.predictions, aiCache.patterns.length, aiCache.sleepAnalysis, hasEnoughData, profile, strengthLogs.length, setAiCache, setLoading]);
 
   // Use calculateReadiness from healthMath instead of local implementation
   const readinessScore = useMemo(() => calculateReadiness(dailyLogs, profile), [dailyLogs, profile]);
@@ -41,7 +41,7 @@ export const useAICoachData = (hasEnoughData: boolean, activeView: string) => {
     if (readinessScore < 60) alerts.push({ type: 'warning' as const, msg: 'RECUPERACIÓN COMPROMETIDA: Considera cardio LISS o reducción de volumen.' });
     if (latest.sleepHours < 6) alerts.push({ type: 'danger' as const, msg: 'DÉFICIT CRÍTICO DE SUEÑO: Riesgo de lesión incrementado.' });
     if (latest.proteinG < (latest.weight * 1.8)) alerts.push({ type: 'warning' as const, msg: 'ANCLA PROTEICA BAJA: Riesgo de pérdida de masa magra.' });
-    
+
     return alerts;
   }, [readinessScore, dailyLogs]);
 
