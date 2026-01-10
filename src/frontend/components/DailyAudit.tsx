@@ -5,12 +5,14 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell }
 
 import AIFeedbackDisplay from './AIFeedbackDisplay';
 import { getDailyAuditFeedback } from '../../backend/services/geminiService';
+import ErrorBanner from './common/ErrorBanner';
 
 const DailyAudit: React.FC = () => {
   const { dailyLogs, profile, aiCache, setAiCache } = useAppStore();
   const [isAnalyzingToday, setIsAnalyzingToday] = useState(false);
   const [isAnalyzingYesterday, setIsAnalyzingYesterday] = useState(false);
   const [mounted] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const todayLog = dailyLogs[0];
   const yesterdayLog = dailyLogs[1];
@@ -48,15 +50,15 @@ const DailyAudit: React.FC = () => {
     const fetchTodayAudit = async () => {
       if (todayLog && !cachedTodayFeedback) {
         setIsAnalyzingToday(true);
-        // Added dailyLogs as third argument
+        setError(null);
         try {
           const advice = await getDailyAuditFeedback(todayLog, profile, dailyLogs);
           if (advice) {
             setAiCache({ dailyAudits: { ...aiCache.dailyAudits, [todayLog.date]: advice } });
           }
-        } catch (err) {
+        } catch (err: string | any) {
           console.error("Failed to fetch today's audit:", err);
-          // Optional: Set some error state here if needed in next task
+          setError(err.message || "Error al analizar los datos. Intenta nuevamente.");
         }
         setIsAnalyzingToday(false);
       }
@@ -94,8 +96,11 @@ const DailyAudit: React.FC = () => {
       <div className="space-y-6">
         <div className="flex items-center gap-3 px-1">
           <span className="text-2xl">📊</span>
-          <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">Balance de Hoy</h3>
+        <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">Balance de Hoy</h3>
         </div>
+
+        {error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
+
         <AIFeedbackDisplay data={cachedTodayFeedback} isLoading={isAnalyzingToday} type="audit" />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

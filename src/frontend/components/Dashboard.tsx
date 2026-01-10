@@ -8,10 +8,12 @@ import {
   OverviewView,
   DailyAudit
 } from './dashboard/index';
+import ErrorBanner from './common/ErrorBanner';
 
 const Dashboard: React.FC = () => {
   const { aiCache, setAiCache, selectedDate, dailyLogs, profile } = useAppStore();
   const [activeView, setActiveView] = useState<'overview' | 'audit'>('overview');
+  const [error, setError] = useState<string | null>(null);
   const data = useDashboardData();
 
   useEffect(() => {
@@ -20,8 +22,9 @@ const Dashboard: React.FC = () => {
         try {
           const preds = await getPredictions(profile, dailyLogs, []);
           if (preds) setAiCache({ predictions: preds });
-        } catch (e) {
+        } catch (e: any) {
           console.error("Dashboard AI Error:", e);
+          setError("No se pudieron generar predicciones. Intenta más tarde.");
         }
       }
     };
@@ -31,6 +34,8 @@ const Dashboard: React.FC = () => {
   return (
     <div className="space-y-8 animate-in fade-in duration-500 pb-12 min-w-0">
       <DashboardViewSwitcher activeView={activeView} setActiveView={setActiveView} />
+
+      {error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
 
       {activeView === 'overview' ? (
         <OverviewView
